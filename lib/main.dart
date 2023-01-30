@@ -5,5 +5,5 @@ import 'package:wakely/ui/screens/main/main_screen.dart';
 
 void main() async {
   await dotenv.load(fileName: '.env');
-  runApp(const Home());
+  runApp(const AlarmScreen());
 }
