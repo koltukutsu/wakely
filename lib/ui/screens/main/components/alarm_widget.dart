@@ -3,7 +3,6 @@ import 'package:wakely/ui/screens/main/components/alarm_individual_widget.dart';
 import 'package:wakely/ui/screens/main/components/individual_alarm_model.dart';
 import 'package:wakely/ui/theme/colors.dart';
 
-
 class AlarmGroupWidget extends StatefulWidget {
   final String alarmGroupName;
   final List<IndividualAlarmModel> alarmSet;
@@ -22,6 +21,8 @@ class _AlarmGroupWidgetState extends State<AlarmGroupWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
+        padding: const EdgeInsets.only(top: 10),
+        margin: const EdgeInsets.only(top: 12),
         width: MediaQuery.of(context).size.width * 0.9,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
@@ -33,7 +34,7 @@ class _AlarmGroupWidgetState extends State<AlarmGroupWidget> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
+                  padding: const EdgeInsets.only(left: 18.0),
                   child: Text(widget.alarmGroupName,
                       style: const TextStyle(
                         fontSize: 28,
@@ -57,8 +58,14 @@ class _AlarmGroupWidgetState extends State<AlarmGroupWidget> {
               ],
             ),
             const Divider(),
-            ...widget.alarmSet.map((IndividualAlarmModel alarmObject) => IndividualAlarm(alarmObject: alarmObject)),
-            const SizedBox(height: 30,)
+            ...widget.alarmSet
+                .map((IndividualAlarmModel alarmObject) => Padding(
+                      padding: const EdgeInsets.only(bottom: 12.0),
+                      child: IndividualAlarm(alarmObject: alarmObject),
+                    )),
+            const SizedBox(
+              height: 8,
+            )
             // ...List.generate(widget.alarmSet.map, (index) => null)
           ],
         ));
