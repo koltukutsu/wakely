@@ -39,6 +39,7 @@ dependencies:
   flutter_bloc: ^8.1.1
   spotify_sdk: ^2.3.0
   flutter_dotenv: ^5.0.2
+  animated_toggle_switch: ^0.6.1
 
 dev_dependencies:
   flutter_test:

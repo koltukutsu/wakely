@@ -1,3 +1,4 @@
+import 'package:animated_toggle_switch/animated_toggle_switch.dart';
 import 'package:flutter/material.dart';
 import 'package:wakely/ui/screens/main/components/alarm_individual_widget.dart';
 import 'package:wakely/ui/screens/main/components/individual_alarm_model.dart';
@@ -17,12 +18,15 @@ class AlarmGroupWidget extends StatefulWidget {
 
 class _AlarmGroupWidgetState extends State<AlarmGroupWidget> {
   bool isEnabled = true;
+  int value = 0;
+  bool positive = false;
+  bool loading = false;
 
   @override
   Widget build(BuildContext context) {
     return Container(
         padding: const EdgeInsets.only(top: 10),
-        margin: const EdgeInsets.only(top: 12),
+        margin: const EdgeInsets.only(top: 12, right: 12, left: 12),
         width: MediaQuery.of(context).size.width * 0.9,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
