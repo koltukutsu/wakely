@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
-import 'package:wakely/ui/screens/main/components/individual_alarm_model.dart';
+import 'package:wakely/data/models/individual_alarm_model.dart';
 
 class IndividualAlarm extends StatelessWidget {
   final IndividualAlarmModel alarmObject;

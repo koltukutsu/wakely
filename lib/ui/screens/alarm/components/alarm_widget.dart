@@ -1,7 +1,6 @@
-import 'package:animated_toggle_switch/animated_toggle_switch.dart';
 import 'package:flutter/material.dart';
-import 'package:wakely/ui/screens/main/components/alarm_individual_widget.dart';
-import 'package:wakely/ui/screens/main/components/individual_alarm_model.dart';
+import 'package:wakely/ui/screens/alarm/components/alarm_individual_widget.dart';
+import 'package:wakely/data/models/individual_alarm_model.dart';
 import 'package:wakely/ui/theme/colors.dart';
 
 class AlarmGroupWidget extends StatefulWidget {

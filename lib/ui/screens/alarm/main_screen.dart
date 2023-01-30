@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:wakely/ui/screens/main/components/alarm_widget.dart';
-import 'package:wakely/ui/screens/main/components/individual_alarm_model.dart';
+import 'package:wakely/ui/screens/alarm/components/alarm_widget.dart';
+import 'package:wakely/data/models/individual_alarm_model.dart';
 import 'package:wakely/ui/theme/colors.dart';
 
 class AlarmScreen extends StatefulWidget {
