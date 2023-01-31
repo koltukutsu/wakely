@@ -8,12 +8,12 @@ abstract class AlarmState extends Equatable {
   List<Object> get props => [];
 }
 
-class IdleState extends AlarmState {
+class AlarmIdleState extends AlarmState {
   @override
   List<Object> get props => [];
 }
 
-class LoggedIn extends AlarmState {
+class AlarmLoggedIn extends AlarmState {
   @override
   List<Object> get props => [];
 }

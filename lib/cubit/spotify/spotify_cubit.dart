@@ -100,6 +100,17 @@ class SpotifyCubit extends Cubit<SpotifyState> {
     } on MissingPluginException {}
   }
 
+  Future<void> checkIfAppIsActive() async {
+    try {
+      var isActive = await SpotifySdk.isSpotifyAppActive;
+      setStatus(isActive.toString());
+    } on PlatformException catch (e) {
+      setStatus(e.code, message: e.message);
+    } on MissingPluginException {
+      setStatus('not implemented');
+    }
+  }
+
   void setStatus(String code, {String? message}) {
     var text = message ?? '';
     _logger.i('$code$text');

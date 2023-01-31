@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:wakely/cubit/alarm/alarm_cubit.dart';
 import 'package:wakely/cubit/spotify/spotify_cubit.dart';
 import 'package:wakely/ui/navigation/navigation_names.dart';
 import 'package:wakely/ui/screens/landing_page/components/idle_screen.dart';
@@ -23,6 +24,7 @@ class _LandingPageState extends State<LandingPage> {
       listener: (context, state) {
         if (state is LoggedIn) {
           // Navigate to next screen
+          context.read<AlarmCubit>().setAlarmGroups();
           Navigator.of(context).pushReplacement(createPageRoute(
               pageRouteType: PageRouteTypes.landingToAlarmMain));
         }

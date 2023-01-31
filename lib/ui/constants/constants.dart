@@ -1,3 +1,3 @@
 class AppPaths {
-  static const buttonClickSound = "assets/audio/click_sound_new.mp3";
+  static const buttonClickSound = "audio/click_sound_new.mp3"; // assets is already included
 }
