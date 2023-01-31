@@ -1,21 +1,15 @@
-// import 'package:flutter/material.dart';
-// import 'package:wakely/ui/screens/login/components/login_screen_body.dart';
-//
-// class StudentLoginScreen extends StatefulWidget {
-//   const StudentLoginScreen({Key? key}) : super(key: key);
-//
-//   @override
-//   State<StudentLoginScreen> createState() => _StudentLoginScreenState();
-// }
-//
-// class _StudentLoginScreenState extends State<StudentLoginScreen> {
-//
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return const Scaffold(
-//       resizeToAvoidBottomInset: true,
-//       body: LoginScreen(),
-//     );
-//   }
-// }
+import 'package:flutter/material.dart';
+
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({Key? key}) : super(key: key);
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}

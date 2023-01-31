@@ -28,9 +28,12 @@ class _AlarmGroupWidgetState extends State<AlarmGroupWidget> {
         margin: const EdgeInsets.only(top: 12, right: 12, left: 12),
         width: MediaQuery.of(context).size.width * 0.9,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          color: AppColors.alarmGroupCardColor,
-        ),
+            borderRadius: BorderRadius.circular(20),
+            color: AppColors.alarmGroupCardColor,
+            border: Border.all(
+              color: AppColors.eerieBlack,
+              width: 1.5,
+            )),
         child: Column(
           children: [
             Row(
@@ -60,7 +63,10 @@ class _AlarmGroupWidgetState extends State<AlarmGroupWidget> {
                 )
               ],
             ),
-            const Divider(),
+            const Padding(
+              padding: EdgeInsets.only(right: 8.0, left: 8),
+              child: Divider(color: AppColors.eerieBlack, thickness: 1.2),
+            ),
             ...widget.alarmSet
                 .map((IndividualAlarmModel alarmObject) => Padding(
                       padding: const EdgeInsets.only(bottom: 12.0),

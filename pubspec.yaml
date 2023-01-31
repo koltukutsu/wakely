@@ -41,6 +41,8 @@ dependencies:
   flutter_dotenv: ^5.0.2
   animated_toggle_switch: ^0.6.1
   equatable: ^2.0.5
+  animated_button: ^0.2.0
+  audioplayers: ^3.0.1
 
 dev_dependencies:
   flutter_test:
@@ -68,9 +70,17 @@ flutter:
   assets:
     - .env
     - assets/
+    - assets/audio/
+    - assets/fonts/
     - assets/songs/
+    - assets/images/
   #   - images/a_dot_ham.jpeg
-
+  fonts:
+    - family: BrandonText
+      fonts:
+        - asset: assets/fonts/BrandonText-bold.otf
+          weight: 700
+        - asset: assets/fonts/BrandonText-regular.otf
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 

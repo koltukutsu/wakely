@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class AddAlarmGroup extends StatefulWidget {
-  const AddAlarmGroup({Key? key}) : super(key: key);
+class AddAlarmScreen extends StatefulWidget {
+  const AddAlarmScreen({Key? key}) : super(key: key);
 
   @override
-  State<AddAlarmGroup> createState() => _AddAlarmGroupState();
+  State<AddAlarmScreen> createState() => _AddAlarmScreenState();
 }
 
-class _AddAlarmGroupState extends State<AddAlarmGroup> {
+class _AddAlarmScreenState extends State<AddAlarmScreen> {
   @override
   Widget build(BuildContext context) {
     return Container();

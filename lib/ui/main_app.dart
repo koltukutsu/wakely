@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:wakely/cubit/alarm/alarm_cubit.dart';
+import 'package:wakely/cubit/spotify/spotify_cubit.dart';
+
+import 'screens/landing_page/landing_page.dart';
+import 'theme/colors.dart';
 
 class MainApp extends StatelessWidget {
   const MainApp({Key? key}) : super(key: key);
@@ -7,25 +12,18 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      providers: const [ // remove const, fill purposes
-        // BlocProvider(
-        //     create: (context) =>
-        //         Cubit(Repository())),
+      providers: [
+        // remove const, fill purposes
+        BlocProvider(create: (context) => AlarmCubit()),
+        BlocProvider(create: (context) => SpotifyCubit()),
       ],
-      child: const Center(), // fill
-      // child: BlocBuilder
-      // <ThemeCubit, ThemeData>(
-      //   builder: (context, theme) => MaterialApp(
-      //     theme: darkTheme,
-      //     themeMode: ThemeMode.system,
-      //     debugShowCheckedModeBanner: false,
-      //     initialRoute: ROUTE_LOGIN,
-      //     routes: {
-      //       ROUTE_FIRST: (context) => const FirstScreen(),
-      //       ROUTE_SECOND: (context) => const SecondScreen(),
-      //     },
-      //   ),
-      // ),
+      child: MaterialApp(
+        themeMode: ThemeMode.system,
+        title: "Wakely",
+        theme: ThemeData(fontFamily: 'BrandonText',backgroundColor: AppColors.mainBackgroundColor),
+        debugShowCheckedModeBanner: false,
+        home: const LandingPage(),
+      ),
     );
   }
 }
