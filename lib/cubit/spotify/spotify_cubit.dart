@@ -1,14 +1,21 @@
+import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 import 'package:logger/logger.dart';
+import 'package:wakely/data/models/user_model.dart';
 
 part "spotify_state.dart";
 
+enum UserStates { premium, free, problem }
+
 class SpotifyCubit extends Cubit<SpotifyState> {
   SpotifyCubit() : super(IdleState());
+  User userProfile =
+      User(name: "", userName: "", userImage: "", userState: "Free");
+  String token = "";
 
   // SpotifySdk spotifySdk;
   final Logger _logger = Logger(
@@ -35,6 +42,42 @@ class SpotifyCubit extends Cubit<SpotifyState> {
   getTheTracks({required String playListId}) async {}
 
   getThePlayLists() async {}
+
+  Future<UserStates> getTheUserProfile() async {
+    // await SpotifySdk.
+    Dio dio = Dio();
+    dio.options.headers['Authorization'] = 'Bearer $token';
+
+    try {
+      Response response = await dio.get('https://api.spotify.com/v1/me',
+          queryParameters: {'scope': 'user-read-private'});
+      // UserStates userState = response.data["product"] == "premium"
+      //     ? UserStates.premium
+      //     : UserStates.free;
+      UserStates userState = UserStates.premium;
+      print(response.data);
+      if (userState == UserStates.premium) {
+        print("Yes");
+        userProfile.name = response.data["display_name"];
+        userProfile.userName = response.data["id"];
+        userProfile.userImage = response.data["images"][0]["url"];
+        // TODO: show that the user is premium
+      } else {
+        print("No");
+        // TODO: show that the user is free
+
+      }
+      if (userState == UserStates.premium) {
+        userProfile.userState = "Premium";
+      }
+      return userState;
+    } catch (e) {
+      setStatus("Un Error Ocurro");
+      setStatus(e.toString());
+      userProfile.userState = "Problem";
+      return UserStates.problem;
+    }
+  }
 
   Future<void> disconnect() async {
     try {
@@ -71,6 +114,7 @@ class SpotifyCubit extends Cubit<SpotifyState> {
   }
 
   Future<String> getAccessToken() async {
+    emit(SpotifyDataLoading());
     try {
       var authenticationToken = await SpotifySdk.getAccessToken(
           clientId: dotenv.env['CLIENT_ID'].toString(),
@@ -80,7 +124,21 @@ class SpotifyCubit extends Cubit<SpotifyState> {
               'playlist-read-private, '
               'playlist-modify-public,user-read-currently-playing');
       setStatus('Got a token: $authenticationToken');
-      emit(LoggedIn());
+      token = authenticationToken;
+
+      UserStates userState = await getTheUserProfile();
+      print(userState);
+      if (userState == UserStates.premium) {
+        print("inside");
+        emit(LoggedIn());
+      } else if (userState == UserStates.premium) {
+        print("inside2");
+        emit(NotPremium());
+      } else {
+        print("inside3");
+        emit(NotLoggedIn());
+      }
+
       return authenticationToken;
     } on PlatformException catch (e) {
       emit(NotLoggedIn());

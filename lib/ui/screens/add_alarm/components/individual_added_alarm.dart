@@ -16,7 +16,7 @@ class IndividualAddedAlarm extends StatelessWidget {
       height: MediaQuery.of(context).size.height * 0.152875,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          color: alarmObject.songBackgroundColor,
+          color: AppColors.mainBackgroundColor,
           border: Border.all(
             color: AppColors.eerieBlack,
             width: 1,

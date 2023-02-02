@@ -13,7 +13,7 @@ class AddAlarmScreen extends StatefulWidget {
 class _AddAlarmScreenState extends State<AddAlarmScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       backgroundColor: AppColors.seaFoamOriginalGreen,
       body: AlarmBody(),
       // bottomNavigationBar: BottomNavigationBar(

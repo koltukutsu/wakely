@@ -13,7 +13,7 @@ class AlarmIdleState extends AlarmState {
   List<Object> get props => [];
 }
 
-class AlarmLoggedIn extends AlarmState {
+class GotAlarms extends AlarmState {
   @override
   List<Object> get props => [];
 }

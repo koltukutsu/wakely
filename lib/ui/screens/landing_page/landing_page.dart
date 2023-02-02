@@ -6,6 +6,7 @@ import 'package:wakely/ui/navigation/navigation_names.dart';
 import 'package:wakely/ui/screens/landing_page/components/idle_screen.dart';
 import 'package:wakely/ui/screens/landing_page/components/not_logged_in_screen.dart';
 import 'package:wakely/ui/screens/landing_page/components/not_premium_screen.dart';
+import 'package:wakely/ui/theme/colors.dart';
 
 class LandingPage extends StatefulWidget {
   const LandingPage({Key? key}) : super(key: key);
@@ -24,7 +25,7 @@ class _LandingPageState extends State<LandingPage> {
       listener: (context, state) {
         if (state is LoggedIn) {
           // Navigate to next screen
-          context.read<AlarmCubit>().setAlarmGroups();
+          context.read<AlarmCubit>().getAlarmGroups();
           Navigator.of(context).pushReplacement(createPageRoute(
               pageRouteType: PageRouteTypes.landingToAlarmMain));
         }
@@ -45,6 +46,12 @@ class _LandingPageState extends State<LandingPage> {
       builder: (context, state) {
         if (state is NotLoggedIn) {
           return const NotLoggedInScreen();
+        }
+        if (state is SpotifyDataLoading) {
+          return const CircularProgressIndicator(
+            color: AppColors.mainBackgroundColor,
+            backgroundColor: AppColors.seaFoamOriginalGreen,
+          );
         } else if (state is NotPremium) {
           return const NotPremiumScreen();
         } else {

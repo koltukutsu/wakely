@@ -1,6 +1,5 @@
 part of "spotify_cubit.dart";
 
-
 abstract class SpotifyState extends Equatable {
   const SpotifyState();
 
@@ -9,6 +8,11 @@ abstract class SpotifyState extends Equatable {
 }
 
 class IdleState extends SpotifyState {
+  @override
+  List<Object> get props => [];
+}
+
+class SpotifyDataLoading extends SpotifyState {
   @override
   List<Object> get props => [];
 }

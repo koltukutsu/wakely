@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:wakely/cubit/alarm/alarm_cubit.dart';
+import 'package:wakely/cubit/spotify/spotify_cubit.dart';
+import 'package:wakely/data/models/alarm_group_model.dart';
 import 'package:wakely/ui/navigation/navigation_names.dart';
 import 'package:wakely/ui/screens/alarm/components/alarm_widget.dart';
 import 'package:wakely/data/models/individual_alarm_model.dart';
@@ -20,24 +24,64 @@ class _AlarmScreenState extends State<AlarmScreen> {
         slivers: [
           SliverAppBar(
             actions: [
-              IconButton(
-                onPressed: () {
-                  Navigator.of(context).push(createPageRoute(
-                      pageRouteType: PageRouteTypes.alarmMainToAddAlarm));
-                },
-                icon: const Icon(
-                  Icons.add,
-                  color: AppColors.eerieBlack,
+              Padding(
+                padding: const EdgeInsets.only(right: 12.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: AppColors.mainBackgroundColor,
+                      border: Border.all(color: AppColors.eerieBlack)),
+                  child: Row(
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          Navigator.of(context).push(createPageRoute(
+                              pageRouteType:
+                                  PageRouteTypes.alarmMainToAddAlarm));
+                        },
+                        highlightColor: AppColors.mainBackgroundColor,
+                        icon: const Icon(
+                          Icons.add,
+                          color: AppColors.eerieBlack,
+                        ),
+                        color: AppColors.tropicalViolet,
+                      ),
+                      Container(
+                        width: 50.0,
+                        height: 50.0,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                            image: NetworkImage(context
+                                .read<SpotifyCubit>()
+                                .userProfile
+                                .userImage),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(25.0),
+                            onTap: () {},
+                          ),
+                        ),
+                      )
+                      // IconButton(
+                      //   onPressed: () async {
+                      //     await context.read<SpotifyCubit>().getTheUserProfile();
+                      //   },
+                      //   highlightColor: AppColors.mainBackgroundColor,
+                      //   splashColor: AppColors.mainBackgroundColor,
+                      //   icon: const Icon(
+                      //     Icons.account_circle_outlined,
+                      //     color: AppColors.eerieBlack,
+                      //   ),
+                      //   color: AppColors.tropicalViolet,
+                      // ),
+                    ],
+                  ),
                 ),
-                color: AppColors.tropicalViolet,
-              ),
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.account_circle_outlined,
-                  color: AppColors.eerieBlack,
-                ),
-                color: AppColors.tropicalViolet,
               ),
             ],
             pinned: false,
@@ -56,47 +100,23 @@ class _AlarmScreenState extends State<AlarmScreen> {
               // background: AppColors.mainBackgroundColor,
             ),
           ),
-          SliverList(
-              delegate: SliverChildListDelegate([
-            AlarmGroupWidget(
-                alarmGroupName: "Nap Time",
-                alarmSet: <IndividualAlarmModel>[
-                  IndividualAlarmModel(
-                      alarmTime: "13:30",
-                      songTitle: "No Heart To Speak Of",
-                      songBackgroundColor: const Color(0xFFAC6432),
-                      songImage: "songs/no_heart_to_speak_of.png",
-                      singerName: "QuietDrive"),
-                  IndividualAlarmModel(
-                      alarmTime: "13:35",
-                      songTitle: "Más Y Más",
-                      songBackgroundColor: const Color(0xFFC82828),
-                      songImage: "songs/mas_y_mas.png",
-                      singerName: "The Smiths"),
-                ]),
-            AlarmGroupWidget(
-                alarmGroupName: "Waking Up",
-                alarmSet: <IndividualAlarmModel>[
-                  IndividualAlarmModel(
-                      alarmTime: "03:35",
-                      songTitle: "There Is A Light That Never Goes Out",
-                      songBackgroundColor: const Color(0xFF304038),
-                      songImage: "songs/there_is_a_light.png",
-                      singerName: "The Smiths"),
-                  IndividualAlarmModel(
-                      alarmTime: "03:40",
-                      songTitle: "This Charming Man - 2011 Remastered",
-                      songBackgroundColor: const Color(0xFF502030),
-                      songImage: "songs/this_charming_man.png",
-                      singerName: "The Smiths"),
-                  IndividualAlarmModel(
-                      alarmTime: "04:45",
-                      songTitle: "Heaven Knows I'm miserable tonight",
-                      songBackgroundColor: const Color(0xFF4A79AF),
-                      songImage: "songs/heaven_knows.png",
-                      singerName: "The Smiths"),
-                ])
-          ]))
+          BlocBuilder<AlarmCubit, AlarmState>(
+              buildWhen: (previous, current) => previous != current,
+              builder: (context, state) {
+                if (state is GotAlarms) {
+                  return SliverList(
+                      delegate: SliverChildListDelegate([
+                    ...(context.read<AlarmCubit>().alarmGroups
+                            as List<AlarmGroupModel>)
+                        .map((AlarmGroupModel alarmGroup) =>
+                            AlarmGroupWidget(alarmGroup: alarmGroup)),
+                  ]));
+                } else {
+                  return const CircularProgressIndicator(
+                    color: AppColors.seaFoamOriginalGreen,
+                  );
+                }
+              })
         ],
       ),
     );
