@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 import 'package:logger/logger.dart';
+import 'package:wakely/data/models/playlist_and_track_model.dart';
 import 'package:wakely/data/models/user_model.dart';
 
 part "spotify_state.dart";
@@ -16,8 +17,12 @@ class SpotifyCubit extends Cubit<SpotifyState> {
   User userProfile =
       User(name: "", userName: "", userImage: "", userState: "Free");
   String token = "";
+  UserPlayListAndTrack userChoices = UserPlayListAndTrack(
+      chosenPlaylist: Playlist(playListImage: "", playListName: ""),
+      chosenTrack: Track(trackImage: "", trackName: "", uri: "", singer: ""));
+  List<Playlist> userPlaylists = [];
+  List<Track> userTracksOfPlaylist = [];
 
-  // SpotifySdk spotifySdk;
   final Logger _logger = Logger(
     //filter: CustomLogFilter(), // custom logfilter can be used to have logs in release mode
     printer: PrettyPrinter(
@@ -39,9 +44,63 @@ class SpotifyCubit extends Cubit<SpotifyState> {
 
   stopTheSong({required String songUrl}) async {}
 
-  getTheTracks({required String playListId}) async {}
+  getTheTracks({required String playListId}) async {
+    Dio dio = Dio();
+    dio.options.headers['Authorization'] = 'Bearer $token';
+    dio.options.headers['Accept'] = 'application/json';
+    dio.options.headers['Content-Type'] = 'application/json';
+    // 4wwhrytorsoBu78gjm3G8V
+    try {
+      Response response = await dio.get(
+          'https://api.spotify.com/v1/playlists/4wwhrytorsoBu78gjm3G8V/tracks',
+          queryParameters: {'scope': 'playlist-read-collaborative'});
+      var tracks = response.data['items'];
+      for (var track in tracks) {
+        final Track userTrack = Track.fromJson(track);
+        // print("*******************");
+        // print(track);
+        // print("-------------------");
+        // print(track["track"]);
+        // print("*******************");
+        userTracksOfPlaylist.add(userTrack);
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
 
-  getThePlayLists() async {}
+  getThePlayListsAndTheLibrary() async {
+    String giveThePlayListImage(Map<String, dynamic> taken) {
+      String given;
+      try {
+        given = taken['images'][0]['url'];
+      } catch (e) {
+        given = "NO PLAYLIST IMAGE";
+      }
+
+      return given;
+    }
+
+    Dio dio = Dio();
+    dio.options.headers['Authorization'] = 'Bearer $token';
+    dio.options.headers['Accept'] = 'application/json';
+    dio.options.headers['Content-Type'] = 'application/json';
+
+    try {
+      Response response = await dio.get(
+          'https://api.spotify.com/v1/me/playlists',
+          queryParameters: {'scope': 'user-library-read'});
+      var playlists = response.data['items'];
+      for (var playlist in playlists) {
+        final Playlist userPlaylist = Playlist(
+            playListImage: giveThePlayListImage(playlist),
+            playListName: playlist["name"]);
+        userPlaylists.add(userPlaylist);
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
 
   Future<UserStates> getTheUserProfile() async {
     // await SpotifySdk.

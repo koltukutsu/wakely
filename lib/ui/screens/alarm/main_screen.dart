@@ -63,7 +63,12 @@ class _AlarmScreenState extends State<AlarmScreen> {
                           color: Colors.transparent,
                           child: InkWell(
                             borderRadius: BorderRadius.circular(25.0),
-                            onTap: () {},
+                            onTap: () {
+                              // Navigator.of(context).push(createPageRoute(
+                              //     pageRouteType:
+                              //     PageRouteTypes.));
+                              // TODO: add profile page
+                            },
                           ),
                         ),
                       )

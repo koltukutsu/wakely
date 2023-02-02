@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uuid/uuid.dart';
 import 'package:wakely/cubit/alarm/alarm_cubit.dart';
+import 'package:wakely/cubit/spotify/spotify_cubit.dart';
 import 'package:wakely/data/models/alarm_group_model.dart';
 import 'package:wakely/ui/navigation/navigation_names.dart';
 import 'package:wakely/ui/screens/alarm/components/alarm_individual_widget.dart';
@@ -134,10 +135,25 @@ class _AlarmBodyState extends State<AlarmBody> {
                   child: Row(
                     children: [
                       IconButton(
-                        onPressed: () {
+                        onPressed: () async {
+                          await context
+                              .read<SpotifyCubit>()
+                              .getThePlayListsAndTheLibrary();
+                          print("SECOND");
+
+                          if (!mounted) return;
+                          await context
+                              .read<SpotifyCubit>()
+                              .getTheTracks(playListId: "12");
+
+                          if (!mounted) return;
                           Navigator.of(context).push(createPageRoute(
                               pageRouteType:
-                              PageRouteTypes.addAlarmToPlaylists));
+                                  PageRouteTypes.addAlarmToPlaylists));
+
+                          if(!mounted) return;
+                          print(context.read<SpotifyCubit>().userPlaylists);
+                          print(context.read<SpotifyCubit>().userTracksOfPlaylist);
                         },
                         highlightColor: AppColors.mainBackgroundColor,
                         icon: const Icon(
@@ -146,25 +162,36 @@ class _AlarmBodyState extends State<AlarmBody> {
                         ),
                         color: AppColors.tropicalViolet,
                       ),
-                      IconButton(
-                        onPressed: () async {
-                          // await context.read<AlarmCubit>().setAlarmGroups();
-                          // if(!mounted) return;
-                          // context.read<AlarmCubit>().getAlarmGroups();
-                        },
-                        highlightColor: AppColors.mainBackgroundColor,
-                        splashColor: AppColors.mainBackgroundColor,
-                        icon: const Icon(
-                          Icons.account_circle_outlined,
-                          color: AppColors.eerieBlack,
+                      Container(
+                        width: 50.0,
+                        height: 50.0,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                            image: NetworkImage(context
+                                .read<SpotifyCubit>()
+                                .userProfile
+                                .userImage),
+                            fit: BoxFit.cover,
+                          ),
                         ),
-                        color: AppColors.tropicalViolet,
-                      ),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(25.0),
+                            onTap: () {
+                              // Navigator.of(context).push(createPageRoute(
+                              //     pageRouteType:
+                              //     PageRouteTypes.));
+                              // TODO: add profile page
+                            },
+                          ),
+                        ),
+                      )
                     ],
                   ),
                 ),
               ),
-
             ],
             pinned: false,
             snap: false,
@@ -182,75 +209,6 @@ class _AlarmBodyState extends State<AlarmBody> {
               // background: AppColors.mainBackgroundColor,
             ),
           ),
-          // SliverList(
-          //     delegate: SliverChildListDelegate([
-          //       Container(
-          //           padding: const EdgeInsets.only(top: 10),
-          //           margin: const EdgeInsets.only(top: 12, right: 12, left: 12),
-          //           width: MediaQuery.of(context).size.width * 0.9,
-          //           decoration: BoxDecoration(
-          //               borderRadius: BorderRadius.circular(20),
-          //               color: AppColors.alarmGroupCardColor,
-          //               border: Border.all(
-          //                 color: AppColors.eerieBlack,
-          //                 width: 1.5,
-          //               )),
-          //           child: Column(
-          //             children: [
-          //               Center(
-          //                 child: IconButton(
-          //                   onPressed: () {
-          //                     setState(() {
-          //                       alarmSet.add(IndividualAlarmModel(
-          //                           alarmTime: "04:45",
-          //                           songTitle: "Heaven Knows I'm miserable tonight",
-          //                           songBackgroundColor: const Color(0xFF4A79AF),
-          //                           songImage: "songs/heaven_knows.png",
-          //                           singerName: "The Smiths"));
-          //                     });
-          //                   },
-          //                   icon: Icon(Icons.add),
-          //                 ),
-          //               ),
-          //               Row(
-          //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //                 children: [
-          //                   Expanded(
-          //                     flex: 2,
-          //                     child: Padding(
-          //                       padding: const EdgeInsets.only(left: 18.0, right: 8),
-          //                       child: TextField(
-          //                           style: const TextStyle(
-          //                             fontSize: 28,
-          //                             fontWeight: FontWeight.bold,
-          //                             color: AppColors.alarmGroupNameColor,
-          //                           )),
-          //                     ),
-          //                   ),
-          //                   Padding(
-          //                     padding: const EdgeInsets.only(right: 12.0),
-          //                     child: CustomButtonAnimated(
-          //                         label: "Okay, let's Go",
-          //                         onPressed: () {},
-          //                         widthRatio: 0.4),
-          //                   )
-          //                 ],
-          //               ),
-          //               const Padding(
-          //                 padding: EdgeInsets.only(right: 8.0, left: 8),
-          //                 child: Divider(color: AppColors.eerieBlack, thickness: 1.2),
-          //               ),
-          //               ...alarmSet.map((IndividualAlarmModel alarmObject) => Padding(
-          //                 padding: const EdgeInsets.only(bottom: 12.0),
-          //                 child: IndividualAlarm(alarmObject: alarmObject),
-          //               )),
-          //               const SizedBox(
-          //                 height: 8,
-          //               )
-          //               // ...List.generate(widget.alarmSet.map, (index) => null)
-          //             ],
-          //           ))
-          //     ])),
         ]);
       },
     );
