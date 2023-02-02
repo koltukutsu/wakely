@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:wakely/ui/screens/add_alarm/add_alarm_group_main.dart';
 import 'package:wakely/ui/screens/alarm/main_screen.dart';
-import 'package:wakely/ui/screens/spotify/playlists_screen.dart';
-import 'package:wakely/ui/screens/spotify/tracks_screen.dart';
+import 'package:wakely/ui/screens/add_alarm/sub_screens/playlists_screen.dart';
+import 'package:wakely/ui/screens/add_alarm/sub_screens/tracks_screen.dart';
 
 enum PageRouteTypes {
   landingToAlarmMain,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wakely/ui/theme/colors.dart';
 
 class TracksScreen extends StatefulWidget {
   const TracksScreen({Key? key}) : super(key: key);
@@ -10,6 +11,8 @@ class TracksScreen extends StatefulWidget {
 class _TracksScreenState extends State<TracksScreen> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      backgroundColor: AppColors.seaFoamOriginalGreen,
+    );
   }
 }
