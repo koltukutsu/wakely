@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:wakely/cubit/alarm/alarm_cubit.dart';
+import 'package:wakely/cubit/spotify/spotify_cubit.dart';
 import 'package:wakely/data/models/alarm_group_model.dart';
+import 'package:wakely/ui/screens/add_alarm/components/time_picker.dart';
 import 'package:wakely/ui/screens/alarm/components/alarm_individual_widget.dart';
 import 'package:wakely/data/models/individual_alarm_model.dart';
 import 'package:wakely/ui/theme/colors.dart';
@@ -7,8 +11,9 @@ import 'package:wakely/ui/widgets/atoms/custom_animated_button.dart';
 
 class AlarmGroupWidget extends StatefulWidget {
   final AlarmGroupModel alarmGroup;
+  final VoidCallback functionRender;
 
-  const AlarmGroupWidget({Key? key, required this.alarmGroup})
+  const AlarmGroupWidget({Key? key, required this.alarmGroup, required this.functionRender})
       : super(key: key);
 
   @override
@@ -37,10 +42,10 @@ class _AlarmGroupWidgetState extends State<AlarmGroupWidget> {
             //   ),
             // ],
             borderRadius: BorderRadius.circular(20),
-            color: AppColors.alarmGroupCardColor,
+            color: AppColors.panel,
             border: Border.all(
-              color: AppColors.eerieBlack,
-              width: 1.5,
+              color: AppColors.borderColor,
+              width: 0.3,
             )),
         child: Column(
           children: [
@@ -53,7 +58,7 @@ class _AlarmGroupWidgetState extends State<AlarmGroupWidget> {
                       style: const TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.alarmGroupNameColor,
+                        color: AppColors.fontColor,
                       )),
                 ),
                 Row(
@@ -62,19 +67,20 @@ class _AlarmGroupWidgetState extends State<AlarmGroupWidget> {
                       padding: const EdgeInsets.only(right: 12.0, bottom: 6),
                       child: CustomButtonAnimated(
                           label: "Delete",
-                          buttonColor: AppColors.tropicalViolet,
+                          buttonColor: AppColors.deleteButton,
                           onPressed: () async {
-                            if (1 == 1) {
-                              print("12313");
-                            } else {}
+                            context.read<AlarmCubit>().deleteAlarmGroup(
+                                alarmGroupObject: widget.alarmGroup);
+                            widget.functionRender();
+
                           },
                           widthRatio: 0.2),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(right: 8.0),
                       child: Switch(
-                        activeColor: AppColors.seaFoamOriginalGreen,
-                        inactiveThumbColor: AppColors.tropicalViolet,
+                        activeColor: AppColors.active,
+                        inactiveThumbColor: AppColors.inactive,
                         trackColor: MaterialStateProperty.resolveWith<Color>(
                             (Set<MaterialState> states) {
                           if (states.contains(MaterialState.disabled)) {

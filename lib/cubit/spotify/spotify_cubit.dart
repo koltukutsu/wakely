@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 import 'package:logger/logger.dart';
+import 'package:wakely/data/models/alarm_group_model.dart';
 import 'package:wakely/data/models/playlist_and_track_model.dart';
 import 'package:wakely/data/models/user_model.dart';
 
@@ -16,12 +17,14 @@ class SpotifyCubit extends Cubit<SpotifyState> {
   SpotifyCubit() : super(IdleState());
   User userProfile =
       User(name: "", userName: "", userImage: "", userState: "Free");
+
   String token = "";
   UserPlayListAndTrack userChoices = UserPlayListAndTrack(
-      chosenPlaylist: Playlist(playListImage: "", playListName: ""),
-      chosenTrack: Track(trackImage: "", trackName: "", uri: "", singer: ""));
+      chosenPlaylist: Playlist(playListImage: "assets/images/placeholder.png", playListName: "", id: ""),
+      chosenTrack:
+          TrackSong(trackImage: "assets/images/placeholder.png", trackName: "", uri: "", singer: ""));
   List<Playlist> userPlaylists = [];
-  List<Track> userTracksOfPlaylist = [];
+  List<TrackSong> userTracksOfPlaylist = [];
 
   final Logger _logger = Logger(
     //filter: CustomLogFilter(), // custom logfilter can be used to have logs in release mode
@@ -45,6 +48,9 @@ class SpotifyCubit extends Cubit<SpotifyState> {
   stopTheSong({required String songUrl}) async {}
 
   getTheTracks({required String playListId}) async {
+    print("GET THE TRACKS");
+    print('https://api.spotify.com/v1/playlists/$playListId/tracks');
+    userTracksOfPlaylist = [];
     Dio dio = Dio();
     dio.options.headers['Authorization'] = 'Bearer $token';
     dio.options.headers['Accept'] = 'application/json';
@@ -52,11 +58,11 @@ class SpotifyCubit extends Cubit<SpotifyState> {
     // 4wwhrytorsoBu78gjm3G8V
     try {
       Response response = await dio.get(
-          'https://api.spotify.com/v1/playlists/4wwhrytorsoBu78gjm3G8V/tracks',
+          'https://api.spotify.com/v1/playlists/$playListId/tracks',
           queryParameters: {'scope': 'playlist-read-collaborative'});
       var tracks = response.data['items'];
       for (var track in tracks) {
-        final Track userTrack = Track.fromJson(track);
+        final TrackSong userTrack = TrackSong.fromJson(track);
         // print("*******************");
         // print(track);
         // print("-------------------");
@@ -75,7 +81,7 @@ class SpotifyCubit extends Cubit<SpotifyState> {
       try {
         given = taken['images'][0]['url'];
       } catch (e) {
-        given = "NO PLAYLIST IMAGE";
+        given = "-";
       }
 
       return given;
@@ -94,6 +100,7 @@ class SpotifyCubit extends Cubit<SpotifyState> {
       for (var playlist in playlists) {
         final Playlist userPlaylist = Playlist(
             playListImage: giveThePlayListImage(playlist),
+            id: playlist["id"],
             playListName: playlist["name"]);
         userPlaylists.add(userPlaylist);
       }
@@ -152,7 +159,6 @@ class SpotifyCubit extends Cubit<SpotifyState> {
 
   Future<void> connectToSpotifyAccount() async {
     try {
-      emit(IdleState());
       var result = await SpotifySdk.connectToSpotifyRemote(
           clientId: dotenv.env['CLIENT_ID'].toString(),
           redirectUrl: dotenv.env['REDIRECT_URL'].toString());
@@ -173,6 +179,7 @@ class SpotifyCubit extends Cubit<SpotifyState> {
   }
 
   Future<String> getAccessToken() async {
+    emit(IdleState());
     emit(SpotifyDataLoading());
     try {
       var authenticationToken = await SpotifySdk.getAccessToken(
@@ -228,6 +235,32 @@ class SpotifyCubit extends Cubit<SpotifyState> {
     }
   }
 
+  void setUserPlaylist({required Playlist playlistObject}) async {
+    userChoices.chosenPlaylist = playlistObject;
+    getTheTracks(playListId: userChoices.chosenPlaylist.id);
+  }
+
+  void setUserTrack({required TrackSong trackObject}) async {
+    userChoices.chosenTrack = trackObject;
+  }
+
+  void resetUserChoices() {
+    userChoices = UserPlayListAndTrack(
+        chosenPlaylist: Playlist(playListImage: "assets/images/placeholder.png", playListName: "", id: ""),
+        chosenTrack:
+            TrackSong(trackImage: "assets/images/placeholder.png", trackName: "", uri: "", singer: ""));
+  }
+  void resetUserTrackChoice() {
+    userChoices.chosenTrack = TrackSong(trackImage: "assets/images/placeholder.png", trackName: "", uri: "", singer: "");
+  }
+  // bool controlThePlaylist({required String userString}) {
+  //   return (userString == UserPlayListAndTrack.chosenTrack.trackName);
+  // }
+  //
+  // bool controlThePlaylist({required String userPlaylist}) {
+  //   return (userPlaylist == UserPlayListAndTrack.chosenPlaylist.playListName);
+  // }
+
   void setStatus(String code, {String? message}) {
     var text = message ?? '';
     _logger.i('$code$text');
@@ -235,5 +268,15 @@ class SpotifyCubit extends Cubit<SpotifyState> {
 
   emitIdleState() {
     emit(IdleState());
+  }
+
+  updateTheState({required int index}){
+    if(index == 0) {
+      emit(SpotifyDataLoading());
+
+    } else {
+      emit(LoggedIn());
+    }
+    // emit(LoggedIn());
   }
 }

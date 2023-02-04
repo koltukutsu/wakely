@@ -13,7 +13,7 @@ part "alarm_state.dart";
 
 class AlarmCubit extends Cubit<AlarmState> {
   AlarmCubit() : super(AlarmIdleState());
-  List alarmGroups = [];
+  List<AlarmGroupModel> alarmGroups = [];
 
   undefined() async {}
 
@@ -38,20 +38,30 @@ class AlarmCubit extends Cubit<AlarmState> {
   getAlarmGroups() async {
     emit(AlarmIdleState());
     final prefs = await SharedPreferences.getInstance();
-    final List<String> alarmGroupsAsList = prefs.getStringList("alarm_groups")!;
-    // print(alarmGroupsAsList);
-    final List<AlarmGroupModel> takenAlarmGroups =
-    alarmGroupsAsList.map((String alarmGroupAsString) {
-      Map<String, dynamic> alarmGroupAsJson = jsonDecode(alarmGroupAsString);
-      return AlarmGroupModel.fromJsonObject(alarmGroupAsJson);
-    }).toList();
-    alarmGroups = takenAlarmGroups;
-    emit(GotAlarms());
-    print("Get: ${alarmGroups.length}");
+    final List<String>? alarmGroupsAsList = prefs.getStringList("alarm_groups");
+    print(alarmGroupsAsList);
+    if (alarmGroupsAsList != null) {
+      final List<AlarmGroupModel> takenAlarmGroups =
+          alarmGroupsAsList.map((String alarmGroupAsString) {
+        Map<String, dynamic> alarmGroupAsJson = jsonDecode(alarmGroupAsString);
+        return AlarmGroupModel.fromJsonObject(alarmGroupAsJson);
+      }).toList();
+      alarmGroups = takenAlarmGroups.cast<AlarmGroupModel>();
+      emit(GotAlarms());
+      print("Get: ${alarmGroups.length}");
+    } else {
+      emit(ZeroGotAlarms());
+    }
   }
 
   setNewAlarmGroup({required AlarmGroupModel newAlarmGroup}) async {
     alarmGroups = [...alarmGroups, newAlarmGroup];
     print("New: ${alarmGroups.length}");
+  }
+
+  void deleteAlarmGroup({required AlarmGroupModel alarmGroupObject}) {
+    alarmGroups.removeWhere(
+        (alarmGObject) => (alarmGObject.id == alarmGroupObject.id));
+    setAlarmGroups();
   }
 }

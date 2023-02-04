@@ -1,4 +1,4 @@
-class Track {
+class TrackSong {
   final String trackImage;
   final String trackName;
   final String uri;
@@ -6,7 +6,7 @@ class Track {
 
   // final String trackLength;
 
-  Track({
+  TrackSong({
     required this.trackImage,
     required this.trackName,
     required this.uri,
@@ -18,24 +18,25 @@ class Track {
   // var artistName = track['track']['artists'][0]['name'];
   // var trackUri = track['track']['uri'];
   // var trackImage = track['track']['album']['images'][0]['url'];
-  Track.fromJson(Map<String, dynamic> json)
-      : trackImage = json["track"]["name"],
-        trackName = json["track"]["artists"][0]["name"],
+  TrackSong.fromJson(Map<String, dynamic> json)
+      : trackImage = json['track']['album']['images'][0]['url'] ?? "-",
+        trackName = json["track"]["name"],
         uri = json["track"]["uri"],
-        singer = json['track']['album']['images'][0]['url'] ?? "NO TRACK IMAGE";
+        singer = json["track"]["artists"][0]["name"];
 // trackLength = json["track"][""];
 }
 
 class Playlist {
   final String playListImage;
   final String playListName;
-
+  final String id;
   // final String singer;
   // final String totalTrackNumber;
 
   Playlist({
     required this.playListImage,
     required this.playListName,
+    required this.id
   });
   //
   // Playlist.fromJson(Map<String, dynamic> json)
@@ -56,7 +57,7 @@ class Playlist {
 
 class UserPlayListAndTrack {
   Playlist chosenPlaylist;
-  Track chosenTrack;
+  TrackSong chosenTrack;
 
   UserPlayListAndTrack(
       {required this.chosenPlaylist, required this.chosenTrack});

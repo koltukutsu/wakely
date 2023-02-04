@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:wakely/cubit/alarm/alarm_cubit.dart';
 import 'package:wakely/cubit/spotify/spotify_cubit.dart';
 import 'package:wakely/data/models/alarm_group_model.dart';
@@ -17,9 +18,16 @@ class AlarmScreen extends StatefulWidget {
 
 class _AlarmScreenState extends State<AlarmScreen> {
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    context.read<SpotifyCubit>().getThePlayListsAndTheLibrary();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.seaFoamOriginalGreen,
+      backgroundColor: AppColors.mainBackground,
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
@@ -29,17 +37,20 @@ class _AlarmScreenState extends State<AlarmScreen> {
                 child: Container(
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
-                      color: AppColors.mainBackgroundColor,
-                      border: Border.all(color: AppColors.eerieBlack)),
+                      color: AppColors.userPanel,
+                      border:
+                          Border.all(color: AppColors.eerieBlack, width: 0.3)),
                   child: Row(
                     children: [
                       IconButton(
                         onPressed: () {
-                          Navigator.of(context).push(createPageRoute(
-                              pageRouteType:
-                                  PageRouteTypes.alarmMainToAddAlarm));
+                          context.push("/alarms/add_alarm");
+                          // context.go("/alarms");
+                          // Navigator.of(context).push(createPageRoute(
+                          //     pageRouteType:
+                          //         PageRouteTypes.alarmMainToAddAlarm));
                         },
-                        highlightColor: AppColors.mainBackgroundColor,
+                        highlightColor: AppColors.mainBackground,
                         icon: const Icon(
                           Icons.add,
                           color: AppColors.eerieBlack,
@@ -93,7 +104,7 @@ class _AlarmScreenState extends State<AlarmScreen> {
             snap: false,
             floating: false,
             expandedHeight: 80.0,
-            backgroundColor: AppColors.seaFoamOriginalGreen,
+            backgroundColor: AppColors.mainBackground,
             flexibleSpace: const FlexibleSpaceBar(
               title: Text(
                 'Welcome!',
@@ -111,14 +122,33 @@ class _AlarmScreenState extends State<AlarmScreen> {
                 if (state is GotAlarms) {
                   return SliverList(
                       delegate: SliverChildListDelegate([
-                    ...(context.read<AlarmCubit>().alarmGroups
-                            as List<AlarmGroupModel>)
-                        .map((AlarmGroupModel alarmGroup) =>
-                            AlarmGroupWidget(alarmGroup: alarmGroup)),
+                    ...(context.read<AlarmCubit>().alarmGroups)
+                        .map((AlarmGroupModel alarmGroup) => AlarmGroupWidget(
+                              alarmGroup: alarmGroup,
+                              functionRender: () {
+                                setState(() {});
+                              },
+                            )),
                   ]));
+                } else if (state is ZeroGotAlarms) {
+                  return SliverList(
+                    delegate: SliverChildListDelegate(
+                      [
+                        const Center(
+                          child: Text("No Alarms Yet"),
+                        )
+                      ],
+                    ),
+                  );
                 } else {
-                  return const CircularProgressIndicator(
-                    color: AppColors.seaFoamOriginalGreen,
+                  return SliverList(
+                    delegate: SliverChildListDelegate(
+                      [
+                        const CircularProgressIndicator(
+                          color: AppColors.seaFoamOriginalGreen,
+                        )
+                      ],
+                    ),
                   );
                 }
               })

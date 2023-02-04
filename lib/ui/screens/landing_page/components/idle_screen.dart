@@ -24,6 +24,7 @@ class _IdleScreenState extends State<IdleScreen> {
       await context.read<SpotifyCubit>().connectToSpotifyAccount();
       if (!mounted) return;
       await context.read<SpotifyCubit>().getAccessToken();
+      print("got it");
     }
 
     return LandingCommonScreen(

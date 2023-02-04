@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 import 'package:wakely/cubit/alarm/alarm_cubit.dart';
 import 'package:wakely/cubit/spotify/spotify_cubit.dart';
 import 'package:wakely/data/models/alarm_group_model.dart';
 import 'package:wakely/ui/navigation/navigation_names.dart';
+import 'package:wakely/ui/screens/add_alarm/components/individual_added_alarm.dart';
+import 'package:wakely/ui/screens/add_alarm/components/time_picker.dart';
 import 'package:wakely/ui/screens/alarm/components/alarm_individual_widget.dart';
 import 'package:wakely/data/models/individual_alarm_model.dart';
 import 'package:wakely/ui/theme/colors.dart';
@@ -25,6 +29,34 @@ class _AlarmBodyState extends State<AlarmBody> {
   final TextEditingController _controller = TextEditingController();
   AlarmGroupModel alarmSet = AlarmGroupModel(
       groupName: "", id: const Uuid().v1(), alarms: <IndividualAlarmModel>[]);
+
+  final TimeOfDay _time = const TimeOfDay(hour: 4, minute: 30);
+
+  void _selectTime() async {
+    // print(context
+    //     .read<SpotifyCubit>()
+    //     .userPlaylists);
+    context.read<SpotifyCubit>().resetUserChoices();
+    final TimeOfDay? newTime = await showTimePicker(
+      context: context,
+      initialTime: _time,
+    );
+    if (newTime != null) {
+      final String hour =
+          newTime.hour < 10 ? "0${newTime.hour}" : newTime.hour.toString();
+      final String minute = newTime.minute < 10
+          ? "0${newTime.minute}"
+          : newTime.minute.toString();
+      setState(() {
+        alarmSet.alarms.add(IndividualAlarmModel(
+            songUrl: "-",
+            alarmTime: "$hour:$minute",
+            songTitle: "-",
+            songImage: "assets/images/placeholder.png",
+            singerName: "-"));
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,21 +79,22 @@ class _AlarmBodyState extends State<AlarmBody> {
                 color: AppColors.alarmGroupCardColor,
                 border: Border.all(
                   color: AppColors.eerieBlack,
-                  width: 1.5,
+                  width: 0.3,
                 )),
             child: Column(
               children: [
                 Center(
                   child: IconButton(
                     onPressed: () {
-                      setState(() {
-                        alarmSet.alarms.add(IndividualAlarmModel(
-                            songUrl: "1",
-                            alarmTime: "04:45",
-                            songTitle: "Heaven Knows I'm miserable tonight",
-                            songImage: "songs/heaven_knows.png",
-                            singerName: "The Smiths"));
-                      });
+                      _selectTime();
+                      // setState(() {
+                      //   alarmSet.alarms.add(IndividualAlarmModel(
+                      //       songUrl: "1",
+                      //       alarmTime: "04:45",
+                      //       songTitle: "Heaven Knows I'm miserable tonight",
+                      //       songImage: "songs/heaven_knows.png",
+                      //       singerName: "The Smiths"));
+                      // });
                     },
                     icon: const Icon(Icons.add),
                   ),
@@ -92,10 +125,15 @@ class _AlarmBodyState extends State<AlarmBody> {
                               await context
                                   .read<AlarmCubit>()
                                   .setNewAlarmGroup(newAlarmGroup: alarmSet);
+                              // Navigator.of(context).push(createPageRoute(
+                              //     pageRouteType:
+                              //         PageRouteTypes.addAlarmToAlarmMain));
                               if (!mounted) return;
                               await context.read<AlarmCubit>().setAlarmGroups();
                               if (!mounted) return;
                               await context.read<AlarmCubit>().getAlarmGroups();
+                              if (!mounted) return;
+                              context.go("/alarms");
                             } else {}
                           },
                           widthRatio: 0.4),
@@ -112,7 +150,7 @@ class _AlarmBodyState extends State<AlarmBody> {
                 ...alarmSet.alarms
                     .map((IndividualAlarmModel alarmObject) => Padding(
                           padding: const EdgeInsets.only(bottom: 12.0),
-                          child: IndividualAlarm(alarmObject: alarmObject),
+                          child: Obx( () => IndividualAddedAlarm(alarmObject: alarmObject)),
                         )),
                 const SizedBox(
                   height: 8,
@@ -131,29 +169,36 @@ class _AlarmBodyState extends State<AlarmBody> {
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
                       color: AppColors.mainBackgroundColor,
-                      border: Border.all(color: AppColors.eerieBlack)),
+                      border:
+                          Border.all(width: 0.3, color: AppColors.eerieBlack)),
                   child: Row(
                     children: [
                       IconButton(
                         onPressed: () async {
-                          await context
-                              .read<SpotifyCubit>()
-                              .getThePlayListsAndTheLibrary();
-                          print("SECOND");
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const TimePicker()),
+                          );
 
-                          if (!mounted) return;
-                          await context
-                              .read<SpotifyCubit>()
-                              .getTheTracks(playListId: "12");
-
-                          if (!mounted) return;
-                          Navigator.of(context).push(createPageRoute(
-                              pageRouteType:
-                                  PageRouteTypes.addAlarmToPlaylists));
-
-                          if(!mounted) return;
-                          print(context.read<SpotifyCubit>().userPlaylists);
-                          print(context.read<SpotifyCubit>().userTracksOfPlaylist);
+                          // await context
+                          //     .read<SpotifyCubit>()
+                          //     .getThePlayListsAndTheLibrary();
+                          // print("SECOND");
+                          //
+                          // if (!mounted) return;
+                          // await context
+                          //     .read<SpotifyCubit>()
+                          //     .getTheTracks(playListId: "12");
+                          //
+                          // if (!mounted) return;
+                          // Navigator.of(context).push(createPageRoute(
+                          //     pageRouteType:
+                          //         PageRouteTypes.addAlarmToPlaylists));
+                          //
+                          // if(!mounted) return;
+                          // print(context.read<SpotifyCubit>().userPlaylists);
+                          // print(context.read<SpotifyCubit>().userTracksOfPlaylist);
                         },
                         highlightColor: AppColors.mainBackgroundColor,
                         icon: const Icon(

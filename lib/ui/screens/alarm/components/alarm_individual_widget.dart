@@ -16,18 +16,23 @@ class IndividualAlarm extends StatelessWidget {
       height: MediaQuery.of(context).size.height * 0.152875,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          color: AppColors.seaFoamOriginalGreen,
+          color: AppColors.mainBackgroundColor,
           border: Border.all(
             color: AppColors.eerieBlack,
-            width: 1,
+            width: 0.3,
           )),
       child: Row(
         // mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Padding(
             padding: const EdgeInsets.only(left: 8.0),
-            child: Image(
-                image: AssetImage("assets/${alarmObject.songImage}"),
+            child: alarmObject.songImage != "assets/images/placeholder.png"
+                ? Image(
+                image: NetworkImage(alarmObject.songImage),
+                width: 81,
+                height: 81)
+                : const Image(
+                image: AssetImage("assets/images/placeholder.png"),
                 width: 81,
                 height: 81),
           ),
@@ -44,7 +49,7 @@ class IndividualAlarm extends StatelessWidget {
                       padding: const EdgeInsets.only(left: 8.0),
                       child: Text(alarmObject.singerName,
                           style: const TextStyle(
-                              color: AppColors.eerieBlack,
+                              color: AppColors.fontColor,
                               fontSize: 20,
                               // fontFamily: "Inter",
                               fontWeight: FontWeight.w500)),
@@ -53,7 +58,7 @@ class IndividualAlarm extends StatelessWidget {
                       padding: const EdgeInsets.only(right: 8.0),
                       child: Text(alarmObject.alarmTime,
                           style: const TextStyle(
-                              color: AppColors.eerieBlack,
+                              color: AppColors.fontColor,
                               fontSize: 32,
                               // fontFamily: "Inter",
                               fontWeight: FontWeight.w900)),
@@ -68,7 +73,7 @@ class IndividualAlarm extends StatelessWidget {
                       //     ? '${alarmObject.songTitle.substring(0, 15)}...'
                       //     : alarmObject.songTitle,
                       style: const TextStyle(
-                          color: AppColors.eerieBlack,
+                          color: AppColors.fontColor,
                           fontSize: 24,
                           // fontFamily: "Inter",
                           fontWeight: FontWeight.w800)),

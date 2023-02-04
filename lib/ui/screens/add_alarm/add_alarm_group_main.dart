@@ -14,14 +14,13 @@ class _AddAlarmScreenState extends State<AddAlarmScreen> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      backgroundColor: AppColors.seaFoamOriginalGreen,
+      backgroundColor: AppColors.mainBackground,
       body: AlarmBody(),
       // bottomNavigationBar: BottomNavigationBar(
       //   type: BottomNavigationBarType.fixed,
       //   items: const <BottomNavigationBarItem>[
       //   ],
       // ),
-
     );
     // body: SlidingUpPanel(
     //   maxHeight: MediaQuery.of(context).size.height,

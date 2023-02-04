@@ -2,11 +2,11 @@ import 'package:flutter/painting.dart';
 import 'package:wakely/ui/theme/colors.dart';
 
 class IndividualAlarmModel {
-  final String alarmTime;
-  final String songTitle;
-  final String songImage;
-  final String singerName;
-  final String songUrl;
+  String alarmTime;
+  String songTitle;
+  String songImage;
+  String singerName;
+  String songUrl;
 
   IndividualAlarmModel(
       {required this.alarmTime,

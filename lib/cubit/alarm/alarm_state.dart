@@ -17,3 +17,7 @@ class GotAlarms extends AlarmState {
   @override
   List<Object> get props => [];
 }
+class ZeroGotAlarms extends AlarmState {
+  @override
+  List<Object> get props => [];
+}
