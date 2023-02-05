@@ -1,19 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:wakely/cubit/spotify/spotify_cubit.dart';
 import 'package:wakely/data/models/individual_alarm_model.dart';
 import 'package:wakely/data/models/playlist_and_track_model.dart';
 import 'package:wakely/ui/navigation/navigation_names.dart';
+import 'package:wakely/ui/screens/add_alarm/sub_screens/sub_components/playingSong.dart';
 import 'package:wakely/ui/theme/colors.dart';
 
 class IndividualTrack extends StatefulWidget {
   final TrackSong trackObject;
   final int index;
   final VoidCallback renderFunction;
+  final Function({required int userChosenTrack}) chosenFunction;
+  final bool chosen;
 
   const IndividualTrack(
-      {Key? key, required this.trackObject, required this.index, required this.renderFunction})
+      {Key? key,
+      required this.chosen,
+      required this.chosenFunction,
+      required this.trackObject,
+      required this.index,
+      required this.renderFunction})
       : super(key: key);
 
   @override
@@ -21,56 +30,100 @@ class IndividualTrack extends StatefulWidget {
 }
 
 class _IndividualTrackState extends State<IndividualTrack> {
-  bool enabled = false;
+  bool paused = false;
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        print("Chosen track");
-        if(enabled) {
-          context
-              .read<SpotifyCubit>()
-              .resetUserChoices();
-        } else {
+        if (widget.chosen == false) {
+          print("Chosen track");
+          widget.chosenFunction(userChosenTrack: (widget.index - 1));
           context
               .read<SpotifyCubit>()
               .setUserTrack(trackObject: widget.trackObject);
+        } else {
+          widget.chosenFunction(userChosenTrack: -1);
+          context.read<SpotifyCubit>().resetUserChoices();
         }
-
         widget.renderFunction();
-
-        // context.read<SpotifyCubit>().updateTheSate(index: 0);
-        // context.read<SpotifyCubit>().updateTheSate(index: 1);
-        setState(() {
-          enabled = !enabled;
-        });
       },
       child: Card(
-        color: enabled ? AppColors.subPanel1:AppColors.subPanel,
+        color: widget.chosen ? AppColors.subPanel1 : AppColors.subPanel,
         child: Row(
           children: <Widget>[
-            SizedBox(
-              height: 90.0,
-              width: 90.0,
-              child: Stack(
-                fit: StackFit.expand,
-                children: <Widget>[
-                  if(widget.trackObject.trackImage != "assets/images/placeholder.png")
-                  Image.network(
-                    widget.trackObject.trackImage,
-                    fit: BoxFit.cover,
-                  ) else Image.asset(
-                    widget.trackObject.trackImage,
-                    fit: BoxFit.cover,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(1.0),
-                    child: Align(
-                      alignment: Alignment.topLeft,
-                      child: Text(widget.index.toString()),
-                    ),
-                  )
-                ],
+            InkWell(
+              onTap: () {
+                final TrackSong playingSong =
+                    context.read<SpotifyCubit>().playingSong;
+
+                if ((paused == false) ||
+                    (paused == true &&
+                        playingSong.uri != widget.trackObject.uri)) {
+                  if (playingSong.uri == widget.trackObject.uri) {
+                    print("pause the song");
+                    context.read<SpotifyCubit>().pauseTheSong();
+                    setState(() {
+                      paused = true;
+                    });
+                  } else {
+                    print("Start the song");
+                    showCupertinoModalBottomSheet(
+                      context: context,
+                      expand: false,
+                      builder: (context) =>
+                          PlayingSongCard(trackObject: widget.trackObject),
+                    );
+
+                    context
+                        .read<SpotifyCubit>()
+                        .playTheSong(song: widget.trackObject);
+                    setState(() {
+                      paused = false;
+                    });
+                  }
+                } else {
+                  if (playingSong.uri == widget.trackObject.uri) {
+                    print("Resume the song");
+                    showCupertinoModalBottomSheet(
+                      context: context,
+                      expand: false,
+                      builder: (context) =>
+                          PlayingSongCard(trackObject: widget.trackObject),
+                    );
+                    context.read<SpotifyCubit>().resumeTheSong();
+                    setState(() {
+                      paused = false;
+                    });
+                  }
+                }
+              },
+              child: SizedBox(
+                height: 90.0,
+                width: 90.0,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: <Widget>[
+                    if (widget.trackObject.trackImage !=
+                        "assets/images/placeholder.png")
+                      Image.network(
+                        widget.trackObject.trackImage,
+                        fit: BoxFit.cover,
+                      )
+                    else
+                      Image.asset(
+                        widget.trackObject.trackImage,
+                        fit: BoxFit.cover,
+                      ),
+                    Padding(
+                      padding: const EdgeInsets.all(1.0),
+                      child: Align(
+                        alignment: Alignment.topLeft,
+                        child: Text(widget.index.toString()),
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
             Expanded(
@@ -94,89 +147,3 @@ class _IndividualTrackState extends State<IndividualTrack> {
     );
   }
 }
-//
-// import 'package:flutter/material.dart';
-// import 'package:flutter/painting.dart';
-// import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:wakely/cubit/spotify/spotify_cubit.dart';
-// import 'package:wakely/data/models/individual_alarm_model.dart';
-// import 'package:wakely/data/models/playlist_and_track_model.dart';
-// import 'package:wakely/ui/navigation/navigation_names.dart';
-// import 'package:wakely/ui/theme/colors.dart';
-//
-// class IndividualTrack extends StatelessWidget {
-//   final TrackSong trackObject;
-//
-//   const IndividualTrack({Key? key, required this.trackObject})
-//       : super(key: key);
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return InkWell(
-//       onTap: () {
-//         print("Chosen track");
-//         context.read<SpotifyCubit>().setUserTrack(trackObject: trackObject);
-//
-//       },
-//       child: Container(
-//         width: MediaQuery.of(context).size.width * 0.835,
-//         height: MediaQuery.of(context).size.height * 0.152875,
-//         decoration: BoxDecoration(
-//             borderRadius: BorderRadius.circular(20),
-//             color: AppColors.mainBackgroundColor,
-//             border: Border.all(
-//               color: AppColors.eerieBlack,
-//               width: 0.3,
-//             )),
-//         child: Row(
-//           // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//           children: [
-//             Padding(
-//               padding: const EdgeInsets.only(left: 8.0),
-//               child: trackObject.trackImage != "-"
-//                   ? Image(
-//                   image: NetworkImage(trackObject.trackImage),
-//                   width: 81,
-//                   height: 81)
-//                   : const Image(
-//                   image: AssetImage("assets/images/placeholder.png"),
-//                   width: 81,
-//                   height: 81),
-//             ),
-//             Expanded(
-//               child: Column(
-//                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   // author and alarm time
-//                   Padding(
-//                     padding: const EdgeInsets.only(left: 8.0),
-//                     child: Text(trackObject.singer,
-//                         style: const TextStyle(
-//                             color: AppColors.fontColor,
-//                             fontSize: 20,
-//                             // fontFamily: "Inter",
-//                             fontWeight: FontWeight.w300)),
-//                   ),
-//                   // title
-//                   Padding(
-//                     padding: const EdgeInsets.only(left: 8.0),
-//                     child: Text(trackObject.trackName,
-//                         // alarmObject.songTitle.length > 15
-//                         //     ? '${alarmObject.songTitle.substring(0, 15)}...'
-//                         //     : alarmObject.songTitle,
-//                         style: const TextStyle(
-//                             color: AppColors.fontColor,
-//                             fontSize: 24,
-//                             // fontFamily: "Inter",
-//                             fontWeight: FontWeight.w500)),
-//                   )
-//                 ],
-//               ),
-//             )
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }

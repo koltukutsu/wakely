@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:wakely/cubit/alarm/alarm_cubit.dart';
 import 'package:wakely/cubit/spotify/spotify_cubit.dart';
 import 'package:wakely/ui/screens/add_alarm/add_alarm_group_main.dart';
@@ -64,15 +65,17 @@ class MainApp extends StatelessWidget {
         BlocProvider(create: (context) => AlarmCubit()),
         BlocProvider(create: (context) => SpotifyCubit()),
       ],
-      child: MaterialApp.router(
-        themeMode: ThemeMode.system,
+      child: GlobalLoaderOverlay(
+        child: MaterialApp.router(
+          themeMode: ThemeMode.system,
 
-        title: "Wakely",
-        // theme: ThemeData(fontFamily: 'BrandonText',backgroundColor: AppColors.mainBackgroundColor),
-        theme: _buildShrineTheme(),
-        debugShowCheckedModeBanner: false,
-        // home: const LandingPage(),
-        routerConfig: _router,
+          title: "Wakely",
+          // theme: ThemeData(fontFamily: 'BrandonText',backgroundColor: AppColors.mainBackgroundColor),
+          theme: _buildShrineTheme(),
+          debugShowCheckedModeBanner: false,
+          // home: const LandingPage(),
+          routerConfig: _router,
+        ),
       ),
     );
   }

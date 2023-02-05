@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:wakely/cubit/spotify/spotify_cubit.dart';
 import 'package:wakely/data/models/individual_alarm_model.dart';
 import 'package:wakely/data/models/playlist_and_track_model.dart';
 import 'package:wakely/ui/navigation/navigation_names.dart';
 import 'package:wakely/ui/screens/add_alarm/sub_screens/playlists_screen.dart';
+import 'package:wakely/ui/screens/add_alarm/sub_screens/sub_components/playingSong.dart';
 import 'package:wakely/ui/theme/colors.dart';
 import 'package:wakely/ui/widgets/atoms/custom_animated_button.dart';
 
@@ -21,26 +23,19 @@ class IndividualAddedAlarm extends StatefulWidget {
 }
 
 class _IndividualAddedAlarmState extends State<IndividualAddedAlarm> {
+  bool paused = false;
+
   renderFunction() async {
     print("""userSongasdasdadsd""");
 
-    final TrackSong userSong = context
-        .read<SpotifyCubit>()
-        .userChoices
-        .chosenTrack;
-    if(!mounted) return;
-    print("cikti_22");
-
+    final TrackSong userSong =
+        context.read<SpotifyCubit>().userChoices.chosenTrack;
     setState(() {
       widget.alarmObject.songUrl = userSong.uri;
-      widget.alarmObject.songImage =
-          userSong.trackImage;
-      widget.alarmObject.singerName =
-          userSong.singer;
-      widget.alarmObject.songTitle =
-          userSong.trackName;
+      widget.alarmObject.songImage = userSong.trackImage;
+      widget.alarmObject.singerName = userSong.singer;
+      widget.alarmObject.songTitle = userSong.trackName;
     });
-    print("""userSongasdasdadsd""");
   }
 
   @override
@@ -108,14 +103,16 @@ class _IndividualAddedAlarmState extends State<IndividualAddedAlarm> {
                               // context.push("/alarms/add_alarm/playlists",
                               // extra: renderFunction);
                               Navigator.of(context).push(
-                                MaterialPageRoute(builder: (context) => PlayListsScreen(renderFunction: renderFunction,)),
+                                MaterialPageRoute(
+                                    builder: (context) => PlayListsScreen(
+                                          renderFunction: renderFunction,
+                                        )),
                               );
 
                               // await waitTheSong();
-                              if(!mounted) return;
+                              if (!mounted) return;
                               print("cikti");
                               // if(!mounted) return;
-
                             }),
                       ),
                     ],
@@ -144,8 +141,60 @@ class _IndividualAddedAlarmState extends State<IndividualAddedAlarm> {
             Padding(
               padding: const EdgeInsets.only(left: 8.0),
               child: InkWell(
-                onTap: (){
-                  context.read<SpotifyCubit>().playTheSong(songUrl: widget.alarmObject.songUrl);
+                onTap: () {
+                  final TrackSong playingSong =
+                      context.read<SpotifyCubit>().playingSong;
+
+                  if ((paused == false) ||
+                      (paused == true &&
+                          playingSong.uri != widget.alarmObject.songUrl)) {
+                    if (playingSong.uri == widget.alarmObject.songUrl) {
+                      print("pause the song");
+                      context.read<SpotifyCubit>().pauseTheSong();
+                      setState(() {
+                        paused = true;
+                      });
+                    } else {
+                      print("Start the song");
+                      showCupertinoModalBottomSheet(
+                        context: context,
+                        expand: false,
+                        builder: (context) => PlayingSongCard(
+                            trackObject: TrackSong(
+                                trackImage: widget.alarmObject.songImage,
+                                trackName: widget.alarmObject.songTitle,
+                                uri: widget.alarmObject.songUrl,
+                                singer: widget.alarmObject.singerName)),
+                      );
+                      context.read<SpotifyCubit>().playTheSong(
+                          song: TrackSong(
+                              trackImage: widget.alarmObject.songImage,
+                              trackName: widget.alarmObject.songTitle,
+                              uri: widget.alarmObject.songUrl,
+                              singer: widget.alarmObject.singerName));
+                      setState(() {
+                        paused = false;
+                      });
+                    }
+                  } else {
+                    if (playingSong.uri == widget.alarmObject.songUrl) {
+                      print("Resume the song");
+                      showCupertinoModalBottomSheet(
+                        context: context,
+                        expand: false,
+                        builder: (context) => PlayingSongCard(
+                            trackObject: TrackSong(
+                                trackImage: widget.alarmObject.songImage,
+                                trackName: widget.alarmObject.songTitle,
+                                uri: widget.alarmObject.songUrl,
+                                singer: widget.alarmObject.singerName)),
+                      );
+                      context.read<SpotifyCubit>().resumeTheSong();
+                      setState(() {
+                        paused = false;
+                      });
+                    }
+                  }
                 },
                 child: Image(
                     image: NetworkImage(widget.alarmObject.songImage),

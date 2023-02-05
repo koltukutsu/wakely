@@ -84,18 +84,6 @@ class _AlarmScreenState extends State<AlarmScreen> {
                           ),
                         ),
                       )
-                      // IconButton(
-                      //   onPressed: () async {
-                      //     await context.read<SpotifyCubit>().getTheUserProfile();
-                      //   },
-                      //   highlightColor: AppColors.mainBackgroundColor,
-                      //   splashColor: AppColors.mainBackgroundColor,
-                      //   icon: const Icon(
-                      //     Icons.account_circle_outlined,
-                      //     color: AppColors.eerieBlack,
-                      //   ),
-                      //   color: AppColors.tropicalViolet,
-                      // ),
                     ],
                   ),
                 ),

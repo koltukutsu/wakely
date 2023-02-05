@@ -40,6 +40,7 @@ class AlarmCubit extends Cubit<AlarmState> {
     final prefs = await SharedPreferences.getInstance();
     final List<String>? alarmGroupsAsList = prefs.getStringList("alarm_groups");
     print(alarmGroupsAsList);
+    print("LOLOLOLOLO");
     if (alarmGroupsAsList != null) {
       final List<AlarmGroupModel> takenAlarmGroups =
           alarmGroupsAsList.map((String alarmGroupAsString) {

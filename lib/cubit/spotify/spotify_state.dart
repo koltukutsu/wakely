@@ -31,3 +31,16 @@ class NotPremium extends SpotifyState {
   @override
   List<Object> get props => [];
 }
+
+class FetchingTracks extends SpotifyState {
+  @override
+  List<Object> get props => [];
+}
+
+class TracksFetched extends SpotifyState {
+  @override
+  List<Object> get props => [];
+}
+
+
+

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:wakely/cubit/alarm/alarm_cubit.dart';
 import 'package:wakely/cubit/spotify/spotify_cubit.dart';
 import 'package:wakely/ui/navigation/navigation_names.dart';
@@ -20,16 +21,23 @@ class _LandingPageState extends State<LandingPage> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<SpotifyCubit, SpotifyState>(
-      listenWhen: (context, state) {
-        return state is! IdleState;
-      },
+      listenWhen: (previous, current) =>
+          previous is IdleState ||
+          current is SpotifyDataLoading ||
+          current is LoggedIn ||
+          current is NotPremium ||
+          current is NotLoggedIn,
       listener: (context, state) {
+        print("AHAHAAAAAAAAAA");
         if (state is LoggedIn) {
           // Navigate to next screen
+          context.loaderOverlay.hide();
           context.read<AlarmCubit>().getAlarmGroups();
           // Navigator.of(context).pushReplacement(createPageRoute(
           //     pageRouteType: PageRouteTypes.landingToAlarmMain));
           context.go("/alarms");
+        } else if (state is SpotifyDataLoading) {
+          context.loaderOverlay.show();
         }
         // else if (state is NotLoggedIn) {
         //   Navigator.of(context).push(createPageRoute(
@@ -50,12 +58,14 @@ class _LandingPageState extends State<LandingPage> {
         if (state is NotLoggedIn) {
           return const NotLoggedInScreen();
         }
-        if (state is SpotifyDataLoading) {
-          return const CircularProgressIndicator(
-            color: AppColors.mainBackgroundColor,
-            backgroundColor: AppColors.seaFoamOriginalGreen,
-          );
-        } else if (state is NotPremium) {
+        // if (state is SpotifyDataLoading) {
+        // return const CircularProgressIndicator(
+        //   color: AppColors.mainBackgroundColor,
+        //   backgroundColor: AppColors.seaFoamOriginalGreen,
+        // );
+
+        // }
+        else if (state is NotPremium) {
           return const NotPremiumScreen();
         } else {
           return const IdleScreen();

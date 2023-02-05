@@ -17,7 +17,11 @@ class SpotifyCubit extends Cubit<SpotifyState> {
   SpotifyCubit() : super(IdleState());
   User userProfile =
       User(name: "", userName: "", userImage: "", userState: "Free");
-
+  TrackSong playingSong = TrackSong(
+      trackImage: "assets/images/placeholder.png",
+      trackName: "-",
+      uri: "-",
+      singer: "-");
   String token = "";
   UserPlayListAndTrack userChoices = UserPlayListAndTrack(
       chosenPlaylist: Playlist(
@@ -50,9 +54,10 @@ class SpotifyCubit extends Cubit<SpotifyState> {
     ),
   );
 
-  playTheSong({required String songUrl}) async {
+  playTheSong({required TrackSong song}) async {
+    playingSong = song;
     try {
-      await SpotifySdk.play(spotifyUri: songUrl);
+      await SpotifySdk.play(spotifyUri: song.uri);
     } on PlatformException catch (e) {
       setStatus(e.code, message: e.message);
     } on MissingPluginException {
@@ -68,6 +73,14 @@ class SpotifyCubit extends Cubit<SpotifyState> {
     } on MissingPluginException {
       setStatus('not implemented');
     }
+  }
+
+  resetThePlayingSong() {
+    playingSong = TrackSong(
+        trackImage: "assets/images/placeholder.png",
+        trackName: "-",
+        uri: "-",
+        singer: "-");
   }
 
   Future<void> resumeTheSong() async {
@@ -88,7 +101,8 @@ class SpotifyCubit extends Cubit<SpotifyState> {
     dio.options.headers['Content-Type'] = 'application/json';
 
     try {
-      Response response = await dio.get('https://api.spotify.com/v1/me/followers');
+      Response response =
+          await dio.get('https://api.spotify.com/v1/me/followers');
       var followersData = response.data;
       var followers = followersData['items'];
 
@@ -102,7 +116,9 @@ class SpotifyCubit extends Cubit<SpotifyState> {
     }
   }
 
-  getTheTracks({required String playListId}) async {
+  getTheTracks() async {
+    emit(FetchingTracks());
+    final String playListId = userChoices.chosenPlaylist.id;
     print("GET THE TRACKS");
     print('https://api.spotify.com/v1/playlists/$playListId/tracks');
     userTracksOfPlaylist = [];
@@ -118,13 +134,9 @@ class SpotifyCubit extends Cubit<SpotifyState> {
       var tracks = response.data['items'];
       for (var track in tracks) {
         final TrackSong userTrack = TrackSong.fromJson(track);
-        // print("*******************");
-        // print(track);
-        // print("-------------------");
-        // print(track["track"]);
-        // print("*******************");
         userTracksOfPlaylist.add(userTrack);
       }
+      emit(TracksFetched());
     } catch (e) {
       print(e);
     }
@@ -292,7 +304,7 @@ class SpotifyCubit extends Cubit<SpotifyState> {
 
   void setUserPlaylist({required Playlist playlistObject}) async {
     userChoices.chosenPlaylist = playlistObject;
-    getTheTracks(playListId: userChoices.chosenPlaylist.id);
+    // getTheTracks(playListId: userChoices.chosenPlaylist.id);
   }
 
   void setUserTrack({required TrackSong trackObject}) async {
@@ -337,12 +349,12 @@ class SpotifyCubit extends Cubit<SpotifyState> {
     emit(IdleState());
   }
 
-  updateTheState({required int index}) {
-    if (index == 0) {
-      emit(SpotifyDataLoading());
-    } else {
-      emit(LoggedIn());
-    }
-    // emit(LoggedIn());
-  }
+  // updateTheState({required int index}) {
+  //   if (index == 0) {
+  //     emit(SpotifyDataLoading());
+  //   } else {
+  //     emit(LoggedIn());
+  //   }
+  //   // emit(LoggedIn());
+  // }
 }

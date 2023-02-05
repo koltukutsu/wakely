@@ -21,6 +21,61 @@ class _TracksScreenState extends State<TracksScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: AppColors.mainBackground,
+        title: const Text("Choose your Song"),
+        automaticallyImplyLeading: false,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 12.0),
+            child: Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: AppColors.mainBackgroundColor,
+                  border: Border.all(color: AppColors.eerieBlack, width: 0.3)),
+              child: Row(
+                children: [
+                  IconButton(
+                    onPressed: () async {
+                      context.pop();
+                    },
+                    highlightColor: AppColors.mainBackgroundColor,
+                    icon: const Icon(
+                      Icons.chevron_left,
+                      color: AppColors.eerieBlack,
+                    ),
+                    color: AppColors.tropicalViolet,
+                  ),
+                  Container(
+                    width: 50.0,
+                    height: 50.0,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                        image: NetworkImage(
+                            context.read<SpotifyCubit>().userProfile.userImage),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(25.0),
+                        onTap: () {
+                          // Navigator.of(context).push(createPageRoute(
+                          //     pageRouteType:
+                          //     PageRouteTypes.));
+                          // TODO: add profile page
+                        },
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
       backgroundColor: AppColors.mainBackground,
       body: TrackBody(renderFunction: () {
         setState(() {
@@ -58,7 +113,7 @@ class _TracksScreenState extends State<TracksScreen> {
                               height: 60,
                               width: 60,
                             )
-                          : Image(
+                          : const Image(
                               image:
                                   AssetImage("assets/images/placeholder.png"),
                               height: 60,
@@ -95,7 +150,7 @@ class _TracksScreenState extends State<TracksScreen> {
                   onPressed: () {
                     print("PRESSED!!!!!!!!!!!!!");
                     widget.renderFunction();
-                    context.read<SpotifyCubit>().updateTheState(index: 1);
+                    // context.read<SpotifyCubit>().updateTheState(index: 1);
                     // context.go("/alarms/add_alarm");
                     context.pop();
                     context.pop();
