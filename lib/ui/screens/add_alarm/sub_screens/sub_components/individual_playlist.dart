@@ -36,12 +36,6 @@ class _IndividualPlaylistState extends State<IndividualPlaylist> {
         });
         print(enabled);
         widget.renderFunction();
-
-        // context.read<SpotifyCubit>().updateTheSate(index: 0);
-        // context.read<SpotifyCubit>().updateTheSate(index: 1);
-        setState(() {
-          enabled = !enabled;
-        });
       },
       child: Card(
         color: enabled ? AppColors.subPanel1:AppColors.subPanel,
