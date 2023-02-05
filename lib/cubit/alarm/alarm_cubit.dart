@@ -65,4 +65,12 @@ class AlarmCubit extends Cubit<AlarmState> {
         (alarmGObject) => (alarmGObject.id == alarmGroupObject.id));
     setAlarmGroups();
   }
+
+  activateAlarm() {
+
+  }
+
+  deactivateAlamr() {
+
+  }
 }
