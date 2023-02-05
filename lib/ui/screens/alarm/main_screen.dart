@@ -21,6 +21,7 @@ class _AlarmScreenState extends State<AlarmScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    // context.read<SpotifyCubit>().getTheFriends();
     context.read<SpotifyCubit>().getThePlayListsAndTheLibrary();
   }
 

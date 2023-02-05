@@ -8,8 +8,9 @@ import 'package:wakely/ui/theme/colors.dart';
 import 'package:wakely/ui/widgets/atoms/custom_animated_button.dart';
 
 class TracksScreen extends StatefulWidget {
+  final VoidCallback renderFunction;
 
-  const TracksScreen({Key? key})
+  const TracksScreen({Key? key, required this.renderFunction})
       : super(key: key);
 
   @override
@@ -93,6 +94,7 @@ class _TracksScreenState extends State<TracksScreen> {
                   widthRatio: 0.3,
                   onPressed: () {
                     print("PRESSED!!!!!!!!!!!!!");
+                    widget.renderFunction();
                     context.read<SpotifyCubit>().updateTheState(index: 1);
                     // context.go("/alarms/add_alarm");
                     context.pop();

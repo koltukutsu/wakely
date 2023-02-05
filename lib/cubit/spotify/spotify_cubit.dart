@@ -20,11 +20,18 @@ class SpotifyCubit extends Cubit<SpotifyState> {
 
   String token = "";
   UserPlayListAndTrack userChoices = UserPlayListAndTrack(
-      chosenPlaylist: Playlist(playListImage: "assets/images/placeholder.png", playListName: "", id: ""),
-      chosenTrack:
-          TrackSong(trackImage: "assets/images/placeholder.png", trackName: "", uri: "", singer: ""));
+      chosenPlaylist: Playlist(
+          playListImage: "assets/images/placeholder.png",
+          playListName: "",
+          id: ""),
+      chosenTrack: TrackSong(
+          trackImage: "assets/images/placeholder.png",
+          trackName: "",
+          uri: "",
+          singer: ""));
   List<Playlist> userPlaylists = [];
   List<TrackSong> userTracksOfPlaylist = [];
+  List<String> userFriends = [];
 
   final Logger _logger = Logger(
     //filter: CustomLogFilter(), // custom logfilter can be used to have logs in release mode
@@ -43,9 +50,57 @@ class SpotifyCubit extends Cubit<SpotifyState> {
     ),
   );
 
-  playTheSong({required String songUrl}) async {}
+  playTheSong({required String songUrl}) async {
+    try {
+      await SpotifySdk.play(spotifyUri: songUrl);
+    } on PlatformException catch (e) {
+      setStatus(e.code, message: e.message);
+    } on MissingPluginException {
+      setStatus('not implemented');
+    }
+  }
 
-  stopTheSong({required String songUrl}) async {}
+  Future<void> pauseTheSong() async {
+    try {
+      await SpotifySdk.pause();
+    } on PlatformException catch (e) {
+      setStatus(e.code, message: e.message);
+    } on MissingPluginException {
+      setStatus('not implemented');
+    }
+  }
+
+  Future<void> resumeTheSong() async {
+    try {
+      await SpotifySdk.resume();
+    } on PlatformException catch (e) {
+      setStatus(e.code, message: e.message);
+    } on MissingPluginException {
+      setStatus('not implemented');
+    }
+  }
+
+  getTheFriends() async {
+    Dio dio = Dio();
+
+    dio.options.headers['Authorization'] = 'Bearer $token';
+    dio.options.headers['Accept'] = 'application/json';
+    dio.options.headers['Content-Type'] = 'application/json';
+
+    try {
+      Response response = await dio.get('https://api.spotify.com/v1/me/followers');
+      var followersData = response.data;
+      var followers = followersData['items'];
+
+      for (var follower in followers) {
+        var followerName = follower['display_name'];
+        print('Follower name: $followerName');
+        userFriends.add(followerName);
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
 
   getTheTracks({required String playListId}) async {
     print("GET THE TRACKS");
@@ -81,7 +136,7 @@ class SpotifyCubit extends Cubit<SpotifyState> {
       try {
         given = taken['images'][0]['url'];
       } catch (e) {
-        given = "-";
+        given = "assets/images/placeholder.png";
       }
 
       return given;
@@ -246,13 +301,25 @@ class SpotifyCubit extends Cubit<SpotifyState> {
 
   void resetUserChoices() {
     userChoices = UserPlayListAndTrack(
-        chosenPlaylist: Playlist(playListImage: "assets/images/placeholder.png", playListName: "", id: ""),
-        chosenTrack:
-            TrackSong(trackImage: "assets/images/placeholder.png", trackName: "", uri: "", singer: ""));
+        chosenPlaylist: Playlist(
+            playListImage: "assets/images/placeholder.png",
+            playListName: "",
+            id: ""),
+        chosenTrack: TrackSong(
+            trackImage: "assets/images/placeholder.png",
+            trackName: "",
+            uri: "",
+            singer: ""));
   }
+
   void resetUserTrackChoice() {
-    userChoices.chosenTrack = TrackSong(trackImage: "assets/images/placeholder.png", trackName: "", uri: "", singer: "");
+    userChoices.chosenTrack = TrackSong(
+        trackImage: "assets/images/placeholder.png",
+        trackName: "",
+        uri: "",
+        singer: "");
   }
+
   // bool controlThePlaylist({required String userString}) {
   //   return (userString == UserPlayListAndTrack.chosenTrack.trackName);
   // }
@@ -270,10 +337,9 @@ class SpotifyCubit extends Cubit<SpotifyState> {
     emit(IdleState());
   }
 
-  updateTheState({required int index}){
-    if(index == 0) {
+  updateTheState({required int index}) {
+    if (index == 0) {
       emit(SpotifyDataLoading());
-
     } else {
       emit(LoggedIn());
     }

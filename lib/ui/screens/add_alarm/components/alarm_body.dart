@@ -107,12 +107,18 @@ class _AlarmBodyState extends State<AlarmBody> {
                       child: Padding(
                         padding: const EdgeInsets.only(left: 18.0, right: 8),
                         child: TextField(
+                          minLines: 2,
+                          maxLines: 2,
                             controller: _controller,
                             style: const TextStyle(
                               fontSize: 28,
                               fontWeight: FontWeight.bold,
                               color: AppColors.alarmGroupNameColor,
-                            )),
+                            ),
+                            autofocus: true,
+                            decoration: InputDecoration(
+                                // prefixText: "Name of Your Alarm",
+                                hintText: "Name of Your Alarm")),
                       ),
                     ),
                     Padding(
@@ -150,7 +156,7 @@ class _AlarmBodyState extends State<AlarmBody> {
                 ...alarmSet.alarms
                     .map((IndividualAlarmModel alarmObject) => Padding(
                           padding: const EdgeInsets.only(bottom: 12.0),
-                          child: Obx( () => IndividualAddedAlarm(alarmObject: alarmObject)),
+                          child: IndividualAddedAlarm(alarmObject: alarmObject),
                         )),
                 const SizedBox(
                   height: 8,

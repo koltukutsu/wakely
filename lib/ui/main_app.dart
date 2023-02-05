@@ -36,13 +36,13 @@ final GoRouter _router = GoRouter(routes: <RouteBase>[
                 GoRoute(
                     path: 'playlists',
                     builder: (BuildContext context, GoRouterState state) {
-                      return const PlayListsScreen();
+                      return PlayListsScreen(renderFunction: (){},);
                     },
                     routes: <RouteBase>[
                       GoRoute(
                           path: 'tracks',
                           builder: (BuildContext context, GoRouterState state) {
-                            return const TracksScreen();
+                            return  TracksScreen(renderFunction: () {},);
                           })
                     ]),
               ],

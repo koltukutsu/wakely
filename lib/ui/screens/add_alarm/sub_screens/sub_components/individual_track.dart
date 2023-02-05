@@ -55,7 +55,11 @@ class _IndividualTrackState extends State<IndividualTrack> {
               child: Stack(
                 fit: StackFit.expand,
                 children: <Widget>[
+                  if(widget.trackObject.trackImage != "assets/images/placeholder.png")
                   Image.network(
+                    widget.trackObject.trackImage,
+                    fit: BoxFit.cover,
+                  ) else Image.asset(
                     widget.trackObject.trackImage,
                     fit: BoxFit.cover,
                   ),

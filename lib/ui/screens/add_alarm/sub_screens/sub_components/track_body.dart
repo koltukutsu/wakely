@@ -109,7 +109,7 @@ class _TrackBodyState extends State<TrackBody> {
             (context, index) {
               final TrackSong track =
                   context.read<SpotifyCubit>().userTracksOfPlaylist[index];
-              return IndividualTrack(trackObject: track, index: index,renderFunction: widget.renderFunction,);
+              return IndividualTrack(trackObject: track, index: index+1,renderFunction: widget.renderFunction,);
             },
             childCount:
                 context.read<SpotifyCubit>().userTracksOfPlaylist.length,

@@ -6,6 +6,7 @@ import 'package:wakely/cubit/spotify/spotify_cubit.dart';
 import 'package:wakely/data/models/individual_alarm_model.dart';
 import 'package:wakely/data/models/playlist_and_track_model.dart';
 import 'package:wakely/ui/navigation/navigation_names.dart';
+import 'package:wakely/ui/screens/add_alarm/sub_screens/playlists_screen.dart';
 import 'package:wakely/ui/theme/colors.dart';
 import 'package:wakely/ui/widgets/atoms/custom_animated_button.dart';
 
@@ -21,10 +22,25 @@ class IndividualAddedAlarm extends StatefulWidget {
 
 class _IndividualAddedAlarmState extends State<IndividualAddedAlarm> {
   renderFunction() async {
-    print("things happened");
+    print("""userSongasdasdadsd""");
+
+    final TrackSong userSong = context
+        .read<SpotifyCubit>()
+        .userChoices
+        .chosenTrack;
+    if(!mounted) return;
+    print("cikti_22");
+
     setState(() {
-      widget.alarmObject;
+      widget.alarmObject.songUrl = userSong.uri;
+      widget.alarmObject.songImage =
+          userSong.trackImage;
+      widget.alarmObject.singerName =
+          userSong.singer;
+      widget.alarmObject.songTitle =
+          userSong.trackName;
     });
+    print("""userSongasdasdadsd""");
   }
 
   @override
@@ -89,30 +105,17 @@ class _IndividualAddedAlarmState extends State<IndividualAddedAlarm> {
                               //     pageRouteType:
                               //         PageRouteTypes.addAlarmToPlaylists));
 
-                              context.push("/alarms/add_alarm/playlists",
-                              extra: renderFunction);
+                              // context.push("/alarms/add_alarm/playlists",
+                              // extra: renderFunction);
+                              Navigator.of(context).push(
+                                MaterialPageRoute(builder: (context) => PlayListsScreen(renderFunction: renderFunction,)),
+                              );
 
                               // await waitTheSong();
                               if(!mounted) return;
                               print("cikti");
-                              if(!mounted) return;
-                              final TrackSong userSong = context
-                                  .read<SpotifyCubit>()
-                                  .userChoices
-                                  .chosenTrack;
-                              if(!mounted) return;
-                              print("cikti_22");
+                              // if(!mounted) return;
 
-                              setState(() {
-                                  widget.alarmObject.songUrl = userSong.uri;
-                                  widget.alarmObject.songImage =
-                                      userSong.trackImage;
-                                  widget.alarmObject.singerName =
-                                      userSong.singer;
-                                  widget.alarmObject.songTitle =
-                                      userSong.trackName;
-                              });
-                              print("""userSongasdasdadsd""");
                             }),
                       ),
                     ],
@@ -140,10 +143,15 @@ class _IndividualAddedAlarmState extends State<IndividualAddedAlarm> {
           children: [
             Padding(
               padding: const EdgeInsets.only(left: 8.0),
-              child: Image(
-                  image: NetworkImage(widget.alarmObject.songImage),
-                  width: 81,
-                  height: 81),
+              child: InkWell(
+                onTap: (){
+                  context.read<SpotifyCubit>().playTheSong(songUrl: widget.alarmObject.songUrl);
+                },
+                child: Image(
+                    image: NetworkImage(widget.alarmObject.songImage),
+                    width: 81,
+                    height: 81),
+              ),
             ),
             Expanded(
               child: Column(
