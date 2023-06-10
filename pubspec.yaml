@@ -50,7 +50,8 @@ dependencies:
   go_router: ^6.0.3
   get: ^4.6.5
   loader_overlay: ^2.1.0
-  modal_bottom_sheet: ^2.1.2
+  modal_bottom_sheet: ^3.0.0-pre
+  android_alarm_manager_plus: ^2.1.0
 
 dev_dependencies:
   flutter_test:

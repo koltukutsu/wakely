@@ -88,9 +88,9 @@ ThemeData _buildShrineTheme() {
   return base.copyWith(
     colorScheme: _shrineColorScheme,
     toggleableActiveColor: shrinePink400,
-    accentColor: shrineBrown900,
+    // accentColor: shrineBrown900,
     primaryColor: shrinePink100,
-    buttonColor: shrinePink100,
+    // buttonColor: shrinePink100,
     scaffoldBackgroundColor: AppColors.mainBackground,
     cardColor: shrineBackgroundWhite,
     textSelectionTheme:
@@ -104,7 +104,7 @@ ThemeData _buildShrineTheme() {
     primaryIconTheme: _customIconTheme(base.iconTheme),
     textTheme: _buildShrineTextTheme(base.textTheme),
     primaryTextTheme: _buildShrineTextTheme(base.primaryTextTheme),
-    accentTextTheme: _buildShrineTextTheme(base.accentTextTheme),
+    // accentTextTheme: _buildShrineTextTheme(base.accentTextTheme),
     iconTheme: _customIconTheme(base.iconTheme),
   );
 }

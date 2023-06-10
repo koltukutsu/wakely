@@ -66,11 +66,11 @@ class AlarmCubit extends Cubit<AlarmState> {
     setAlarmGroups();
   }
 
-  activateAlarm() {
-
+  activateAlarm({required AlarmGroupModel alarmGroup}) {
+    for (IndividualAlarmModel alarm in alarmGroup.alarms) {}
   }
 
-  deactivateAlamr() {
-
+  deactivateAlamr({required AlarmGroupModel alarmGroup}) {
+    for (IndividualAlarmModel alarm in alarmGroup.alarms) {}
   }
 }

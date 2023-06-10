@@ -1,9 +1,14 @@
+import 'dart:isolate';
+
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:wakely/cubit/alarm/alarm_cubit.dart';
 import 'package:wakely/cubit/spotify/spotify_cubit.dart';
+import 'package:wakely/ui/constants/constants.dart';
 import 'package:wakely/ui/navigation/navigation_names.dart';
 import 'package:wakely/ui/screens/landing_page/components/idle_screen.dart';
 import 'package:wakely/ui/screens/landing_page/components/not_logged_in_screen.dart';
@@ -27,15 +32,18 @@ class _LandingPageState extends State<LandingPage> {
           current is LoggedIn ||
           current is NotPremium ||
           current is NotLoggedIn,
-      listener: (context, state) {
+      listener: (context, state) async {
         print("AHAHAAAAAAAAAA");
         if (state is LoggedIn) {
           // Navigate to next screen
           context.loaderOverlay.hide();
           context.read<AlarmCubit>().getAlarmGroups();
+          await AndroidAlarmManager.periodic(const Duration(seconds: 5), 0, printHello);
           // Navigator.of(context).pushReplacement(createPageRoute(
           //     pageRouteType: PageRouteTypes.landingToAlarmMain));
+          if(!mounted) return;
           context.go("/alarms");
+
         } else if (state is SpotifyDataLoading) {
           context.loaderOverlay.show();
         }
@@ -73,4 +81,14 @@ class _LandingPageState extends State<LandingPage> {
       },
     );
   }
+
+  @pragma('vm:entry-point')
+  static void printHello() {
+    final DateTime now = DateTime.now();
+    final int isolateId = Isolate.current.hashCode;
+    print("[$now] Hello, world! isolate=${isolateId} function='$printHello'");
+    AudioPlayer().play(AssetSource(AppPaths.buttonClickSound));
+
+  }
+
 }
