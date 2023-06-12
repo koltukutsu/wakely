@@ -38,7 +38,6 @@ class _LandingPageState extends State<LandingPage> {
           // Navigate to next screen
           context.loaderOverlay.hide();
           context.read<AlarmCubit>().getAlarmGroups();
-          await AndroidAlarmManager.periodic(const Duration(seconds: 5), 0, printHello);
           // Navigator.of(context).pushReplacement(createPageRoute(
           //     pageRouteType: PageRouteTypes.landingToAlarmMain));
           if(!mounted) return;
@@ -81,14 +80,4 @@ class _LandingPageState extends State<LandingPage> {
       },
     );
   }
-
-  @pragma('vm:entry-point')
-  static void printHello() {
-    final DateTime now = DateTime.now();
-    final int isolateId = Isolate.current.hashCode;
-    print("[$now] Hello, world! isolate=${isolateId} function='$printHello'");
-    AudioPlayer().play(AssetSource(AppPaths.buttonClickSound));
-
-  }
-
 }
