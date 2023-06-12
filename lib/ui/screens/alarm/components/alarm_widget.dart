@@ -13,7 +13,8 @@ class AlarmGroupWidget extends StatefulWidget {
   final AlarmGroupModel alarmGroup;
   final VoidCallback functionRender;
 
-  const AlarmGroupWidget({Key? key, required this.alarmGroup, required this.functionRender})
+  const AlarmGroupWidget(
+      {Key? key, required this.alarmGroup, required this.functionRender})
       : super(key: key);
 
   @override
@@ -68,11 +69,51 @@ class _AlarmGroupWidgetState extends State<AlarmGroupWidget> {
                       child: CustomButtonAnimated(
                           label: "Delete",
                           buttonColor: AppColors.deleteButton,
-                          onPressed: () async {
-                            context.read<AlarmCubit>().deleteAlarmGroup(
-                                alarmGroupObject: widget.alarmGroup);
-                            widget.functionRender();
+                          onPressed: () {
+                            showDialog<String>(
+                              context: context,
+                              builder: (BuildContext context) => Dialog(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      const Text(
+                                          'Do you want to delete the Alarm List?'),
+                                      const SizedBox(height: 15),
+                                      Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        children: [
+                                          TextButton(
+                                            onPressed: () {
+                                              context
+                                                  .read<AlarmCubit>()
+                                                  .deleteAlarmGroup(
+                                                      alarmGroupObject:
+                                                          widget.alarmGroup);
+                                              widget.functionRender();
 
+                                              Navigator.pop(context);
+                                            },
+                                            child: const Text('Delete'),
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: const Text('Close'),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+
+                            //
                           },
                           widthRatio: 0.2),
                     ),
@@ -97,6 +138,12 @@ class _AlarmGroupWidgetState extends State<AlarmGroupWidget> {
                         }),
                         value: isEnabled,
                         onChanged: (bool value) {
+                          if(value){
+                            context.read<AlarmCubit>().activateAlarm(alarmGroup: widget.alarmGroup);
+                          }else {
+                            context.read<AlarmCubit>().deactivateAlarm(alarmGroup: widget.alarmGroup);
+
+                          }
                           setState(() {
                             isEnabled = value;
                           });

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,6 +15,7 @@ part "alarm_state.dart";
 class AlarmCubit extends Cubit<AlarmState> {
   AlarmCubit() : super(AlarmIdleState());
   List<AlarmGroupModel> alarmGroups = [];
+  int counter = 1;
 
   undefined() async {}
 
@@ -65,12 +67,18 @@ class AlarmCubit extends Cubit<AlarmState> {
         (alarmGObject) => (alarmGObject.id == alarmGroupObject.id));
     setAlarmGroups();
   }
-
+  @pragma('vm:entry-point')
   activateAlarm({required AlarmGroupModel alarmGroup}) {
-    for (IndividualAlarmModel alarm in alarmGroup.alarms) {}
+    for (IndividualAlarmModel alarm in alarmGroup.alarms) {
+      print(alarm.alarmTime);
+      // AndroidAlarmManager.periodic(duration, id, callback);
+    }
   }
 
-  deactivateAlamr({required AlarmGroupModel alarmGroup}) {
-    for (IndividualAlarmModel alarm in alarmGroup.alarms) {}
+  @pragma('vm:entry-point')
+  deactivateAlarm({required AlarmGroupModel alarmGroup}) {
+    for (IndividualAlarmModel alarm in alarmGroup.alarms) {
+      // AndroidAlarmManager.cancel(id);
+    }
   }
 }

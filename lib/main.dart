@@ -23,5 +23,6 @@ void main() async {
   await AndroidAlarmManager.initialize();
   runApp(const MainApp());
   await AndroidAlarmManager.periodic(
+    // wakeup:
       const Duration(minutes: 1), helloAlarmID, printHello);
 }
