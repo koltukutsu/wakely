@@ -1,16 +1,14 @@
 import 'dart:convert';
-import 'dart:isolate';
-
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 import 'package:wakely/data/models/alarm_group_model.dart';
 import 'package:wakely/data/models/individual_alarm_model.dart';
-
+import 'package:wakely/main.dart';
+import 'package:wakely/ui/main_app.dart';
 part "alarm_state.dart";
 
 class AlarmCubit extends Cubit<AlarmState> {
@@ -47,7 +45,7 @@ class AlarmCubit extends Cubit<AlarmState> {
     print("LOLOLOLOLO");
     if (alarmGroupsAsList != null) {
       final List<AlarmGroupModel> takenAlarmGroups =
-          alarmGroupsAsList.map((String alarmGroupAsString) {
+      alarmGroupsAsList.map((String alarmGroupAsString) {
         Map<String, dynamic> alarmGroupAsJson = jsonDecode(alarmGroupAsString);
         return AlarmGroupModel.fromJsonObject(alarmGroupAsJson);
       }).toList();
@@ -66,7 +64,7 @@ class AlarmCubit extends Cubit<AlarmState> {
 
   void deleteAlarmGroup({required AlarmGroupModel alarmGroupObject}) {
     alarmGroups.removeWhere(
-        (alarmGObject) => (alarmGObject.id == alarmGroupObject.id));
+            (alarmGObject) => (alarmGObject.id == alarmGroupObject.id));
     setAlarmGroups();
   }
 
@@ -85,18 +83,26 @@ class AlarmCubit extends Cubit<AlarmState> {
       if (scheduledTime.isBefore(now)) {
         scheduledTime = scheduledTime.add(const Duration(days: 1));
       }
-      counter+= 1;
+      counter += 1;
+      // await AndroidAlarmManager.periodic(
+      //   const Duration(days: 1), // Repeat interval (1 day)
+      //   counter, // Alarm ID (use a unique value for different alarms)
+      //   alarmCallback, // Callback function
+      //   startAt: scheduledTime,
+      //   params: {
+      //     "songUrl": alarm.songUrl
+      //   },
+      //   // Set the initial trigger time
+      //   exact: true,
+      //   // Set it to true for alarms that need to be triggered at an exact time
+      //   wakeup: true, // Set it to true to wake up the device if it's asleep
+      // );
+      // SpotifySdk.play(spotifyUri: alarm.songUrl);
       await AndroidAlarmManager.periodic(
-        const Duration(days: 1), // Repeat interval (1 day)
-        counter, // Alarm ID (use a unique value for different alarms)
-        alarmCallback, // Callback function
-        startAt: scheduledTime,
-        // Set the initial trigger time
-        exact: true,
-        // Set it to true for alarms that need to be triggered at an exact time
-        wakeup: true, // Set it to true to wake up the device if it's asleep
-      );
-
+          Duration(minutes: counter*5), 0, alarmCallback,
+          allowWhileIdle: true,
+          rescheduleOnReboot: true,
+          params: {"songUrl": alarm.songUrl}, exact: true, wakeup: true);
     }
   }
 
@@ -104,22 +110,5 @@ class AlarmCubit extends Cubit<AlarmState> {
     for (IndividualAlarmModel alarm in alarmGroup.alarms) {
       // AndroidAlarmManager.cancel(id);
     }
-  }
-
-  @pragma('vm:entry-point')
-  void alarmCallback(){
-    final DateTime now = DateTime.now();
-    final int isolateId = Isolate.current.hashCode;
-    print("Setting the song ${alarmObject.songUrl}");
-      try {
-        SpotifySdk.play(spotifyUri: alarmObject.songUrl);
-      } on PlatformException catch (e) {
-        // setStatus(e.code, message: e.message);
-        print("${e.code} + ${e.message}");
-      } on MissingPluginException {
-        print('not implemented');
-      }
-    print(
-        "[$now] 33 Hello, world! isolate=${isolateId} function='$alarmCallback'");
   }
 }

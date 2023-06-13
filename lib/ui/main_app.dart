@@ -55,6 +55,7 @@ final GoRouter _router = GoRouter(routes: <RouteBase>[
 
 
 class MainApp extends StatelessWidget {
+
   const MainApp({Key? key}) : super(key: key);
 
   @override
@@ -79,6 +80,8 @@ class MainApp extends StatelessWidget {
       ),
     );
   }
+
+
 }
 
 ThemeData _buildShrineTheme() {
