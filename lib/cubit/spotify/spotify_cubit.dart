@@ -8,6 +8,8 @@ import 'package:logger/logger.dart';
 import 'package:wakely/data/models/alarm_group_model.dart';
 import 'package:wakely/data/models/playlist_and_track_model.dart';
 import 'package:wakely/data/models/user_model.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 part "spotify_state.dart";
 
@@ -177,34 +179,38 @@ class SpotifyCubit extends Cubit<SpotifyState> {
   }
 
   Future<UserStates> getTheUserProfile() async {
-    // await SpotifySdk.
-    Dio dio = Dio();
-    dio.options.headers['Authorization'] = 'Bearer $token';
-
     try {
-      Response response = await dio.get('https://api.spotify.com/v1/me',
-          queryParameters: {'scope': 'user-read-private'});
-      // UserStates userState = response.data["product"] == "premium"
-      //     ? UserStates.premium
-      //     : UserStates.free;
-      UserStates userState = UserStates.premium;
-      print(response.data);
-      if (userState == UserStates.premium) {
-        print("Yes");
-        userProfile.name = response.data["display_name"];
-        userProfile.userName = response.data["id"];
-        userProfile.userImage = response.data["images"][0]["url"];
-        // TODO: show that the user is premium
+      final response = await http.get(
+        Uri.parse('https://api.spotify.com/v1/me'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        UserStates userState =
+            data["product"] == "premium" ? UserStates.premium : UserStates.free;
+
+        if (userState == UserStates.premium) {
+          userProfile.name = data["display_name"];
+          userProfile.userName = data["id"];
+          userProfile.userImage = data["images"][0]["url"];
+          userProfile.userState = "Premium";
+        } else {
+          userProfile.userState = "Free";
+        }
+        return userState;
       } else {
-        print("No");
-        // TODO: show that the user is free
+        setStatus("Error: ${response.statusCode}");
+        setStatus(response.body);
+        userProfile.userState = "Problem";
+        return UserStates.problem;
       }
-      if (userState == UserStates.premium) {
-        userProfile.userState = "Premium";
-      }
-      return userState;
     } catch (e) {
-      setStatus("Un Error Ocurro");
+      setStatus("Error occurred");
       setStatus(e.toString());
       userProfile.userState = "Problem";
       return UserStates.problem;
@@ -245,10 +251,15 @@ class SpotifyCubit extends Cubit<SpotifyState> {
       var authenticationToken = await SpotifySdk.getAccessToken(
           clientId: dotenv.env['CLIENT_ID'].toString(),
           redirectUrl: "wakely://callback",
-          scope: 'app-remote-control, '
-              'user-modify-playback-state, '
-              'playlist-read-private, '
-              'playlist-modify-public,user-read-currently-playing');
+          scope: 'app-remote-control '
+              'user-modify-playback-state '
+              'playlist-read-private '
+              'playlist-modify-public '
+              'user-read-currently-playing '
+              'user-read-private '
+              'user-read-email '
+              'user-library-read '
+              'user-follow-read');
       setStatus('Got a token: $authenticationToken');
       token = authenticationToken;
 
