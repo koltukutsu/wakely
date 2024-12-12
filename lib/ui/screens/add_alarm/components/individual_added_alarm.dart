@@ -253,18 +253,18 @@ class _IndividualAddedAlarmState extends State<IndividualAddedAlarm> {
     }
   }
 
-  void someListener() {
-    if (!GoRouter.of(context).location.contains("/track")) {
-      // Here you check for some changes in your route that indicate you are no longer on the page you have pushed before
-      // final TrackSong userSong =
-      //     context.read<SpotifyCubit>().userChoices.chosenTrack;
-      // setState(() {
-      //   widget.alarmObject.songUrl = userSong.uri;
-      //   widget.alarmObject.songImage = userSong.trackImage;
-      //   widget.alarmObject.singerName = userSong.singer;
-      //   widget.alarmObject.songTitle = userSong.trackName;
-      // });
-      GoRouter.of(context).removeListener(someListener); // remove listener
-    }
-  }
+  // void someListener() {
+  //   if (!GoRouter.of(context).location.contains("/track")) {
+  //     // Here you check for some changes in your route that indicate you are no longer on the page you have pushed before
+  //     // final TrackSong userSong =
+  //     //     context.read<SpotifyCubit>().userChoices.chosenTrack;
+  //     // setState(() {
+  //     //   widget.alarmObject.songUrl = userSong.uri;
+  //     //   widget.alarmObject.songImage = userSong.trackImage;
+  //     //   widget.alarmObject.singerName = userSong.singer;
+  //     //   widget.alarmObject.songTitle = userSong.trackName;
+  //     // });
+  //     GoRouter.of(context).removeListener(someListener); // remove listener
+  //   }
+  // }
 }

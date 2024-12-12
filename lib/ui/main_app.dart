@@ -8,11 +8,9 @@ import 'package:wakely/ui/screens/add_alarm/add_alarm_group_main.dart';
 import 'package:wakely/ui/screens/add_alarm/sub_screens/playlists_screen.dart';
 import 'package:wakely/ui/screens/add_alarm/sub_screens/tracks_screen.dart';
 import 'package:wakely/ui/screens/alarm/main_screen.dart';
-import 'package:wakely/ui/screens/spotify/spotify_sdk.dart';
 
 import 'screens/landing_page/landing_page.dart';
 import 'theme/colors.dart';
-
 
 /// The route configuration.
 final GoRouter _router = GoRouter(routes: <RouteBase>[
@@ -37,13 +35,17 @@ final GoRouter _router = GoRouter(routes: <RouteBase>[
                 GoRoute(
                     path: 'playlists',
                     builder: (BuildContext context, GoRouterState state) {
-                      return PlayListsScreen(renderFunction: (){},);
+                      return PlayListsScreen(
+                        renderFunction: () {},
+                      );
                     },
                     routes: <RouteBase>[
                       GoRoute(
                           path: 'tracks',
                           builder: (BuildContext context, GoRouterState state) {
-                            return  TracksScreen(renderFunction: () {},);
+                            return TracksScreen(
+                              renderFunction: () {},
+                            );
                           })
                     ]),
               ],
@@ -53,9 +55,7 @@ final GoRouter _router = GoRouter(routes: <RouteBase>[
       ])
 ]);
 
-
 class MainApp extends StatelessWidget {
-
   const MainApp({Key? key}) : super(key: key);
 
   @override
@@ -80,26 +80,22 @@ class MainApp extends StatelessWidget {
       ),
     );
   }
-
-
 }
 
 ThemeData _buildShrineTheme() {
-  final ThemeData base = ThemeData.light(
-      useMaterial3: true
-  );
+  final ThemeData base = ThemeData.light(useMaterial3: true);
   return base.copyWith(
     colorScheme: _shrineColorScheme,
-    toggleableActiveColor: shrinePink400,
+    // toggleableActiveColor: shrinePink400,
     // accentColor: shrineBrown900,
     primaryColor: shrinePink100,
     // buttonColor: shrinePink100,
     scaffoldBackgroundColor: AppColors.mainBackground,
     cardColor: shrineBackgroundWhite,
     textSelectionTheme:
-    const TextSelectionThemeData(selectionColor: shrinePink100),
+        const TextSelectionThemeData(selectionColor: shrinePink100),
     // textSelectionColor: shrinePink100,
-    errorColor: shrineErrorRed,
+    // errorColor: shrineErrorRed,
     buttonTheme: const ButtonThemeData(
       colorScheme: _shrineColorScheme,
       textTheme: ButtonTextTheme.normal,
@@ -119,29 +115,29 @@ IconThemeData _customIconTheme(IconThemeData original) {
 TextTheme _buildShrineTextTheme(TextTheme base) {
   return base
       .copyWith(
-    caption: base.caption?.copyWith(
-      fontWeight: FontWeight.w400,
-      fontSize: 14,
-      letterSpacing: defaultLetterSpacing,
-    ),
-    button: base.button?.copyWith(
-      fontWeight: FontWeight.w500,
-      fontSize: 14,
-      letterSpacing: defaultLetterSpacing,
-    ),
-  )
+          // caption: base.caption?.copyWith(
+          //   fontWeight: FontWeight.w400,
+          //   fontSize: 14,
+          //   letterSpacing: defaultLetterSpacing,
+          // ),
+          // button: base.button?.copyWith(
+          //   fontWeight: FontWeight.w500,
+          //   fontSize: 14,
+          //   letterSpacing: defaultLetterSpacing,
+          // ),
+          )
       .apply(
-    fontFamily: 'BrandonText',
-    displayColor: shrineBrown900,
-    bodyColor: shrineBrown900,
-  );
+        fontFamily: 'BrandonText',
+        displayColor: shrineBrown900,
+        bodyColor: shrineBrown900,
+      );
 }
 
 const ColorScheme _shrineColorScheme = ColorScheme(
   primary: shrinePink400,
-  primaryVariant: shrineBrown900,
+  // primaryVariant: shrineBrown900,
   secondary: shrinePink50,
-  secondaryVariant: shrineBrown900,
+  // secondaryVariant: shrineBrown900,
   surface: shrineSurfaceWhite,
   background: shrineBackgroundWhite,
   error: shrineErrorRed,

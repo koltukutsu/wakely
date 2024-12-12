@@ -198,7 +198,6 @@ class SpotifyCubit extends Cubit<SpotifyState> {
       } else {
         print("No");
         // TODO: show that the user is free
-
       }
       if (userState == UserStates.premium) {
         userProfile.userState = "Premium";
@@ -228,19 +227,13 @@ class SpotifyCubit extends Cubit<SpotifyState> {
     try {
       var result = await SpotifySdk.connectToSpotifyRemote(
           clientId: dotenv.env['CLIENT_ID'].toString(),
-          redirectUrl: dotenv.env['REDIRECT_URL'].toString());
+          redirectUrl: "wakely://callback");
       setStatus(result
           ? 'connect to spotify successful'
           : 'connect to spotify failed');
-      // emit(LoggedIn());
     } catch (e) {
       print(e);
       setStatus(e.toString());
-
-      emit(NotLoggedIn());
-    } on PlatformException catch (e) {
-      emit(NotLoggedIn());
-    } on MissingPluginException {
       emit(NotLoggedIn());
     }
   }
@@ -251,7 +244,7 @@ class SpotifyCubit extends Cubit<SpotifyState> {
     try {
       var authenticationToken = await SpotifySdk.getAccessToken(
           clientId: dotenv.env['CLIENT_ID'].toString(),
-          redirectUrl: dotenv.env['REDIRECT_URL'].toString(),
+          redirectUrl: "wakely://callback",
           scope: 'app-remote-control, '
               'user-modify-playback-state, '
               'playlist-read-private, '
@@ -293,7 +286,10 @@ class SpotifyCubit extends Cubit<SpotifyState> {
 
   Future<void> checkIfAppIsActive() async {
     try {
-      var isActive = await SpotifySdk.isSpotifyAppActive;
+      // var isActive = await SpotifySdk.;
+      var isActive = await SpotifySdk.connectToSpotifyRemote(
+          clientId: dotenv.env['CLIENT_ID'].toString(),
+          redirectUrl: dotenv.env['REDIRECT_URL'].toString());
       setStatus(isActive.toString());
     } on PlatformException catch (e) {
       setStatus(e.code, message: e.message);
